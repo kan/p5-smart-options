@@ -7,7 +7,18 @@ our $VERSION = '0.01';
 sub new {
     my $pkg = shift;
 
-    bless { args => \@_ }, $pkg;
+    bless { args => \@_, alias => {} }, $pkg;
+}
+
+sub alias {
+    my $self = shift;
+
+    my %args = @_;
+    for my $option (keys %args) {
+        $self->{alias}->{$option} = $args{$option};
+    }
+
+    $self;
 }
 
 sub argv {
@@ -15,24 +26,28 @@ sub argv {
 
     my $argv = {};
     my @args;
+    my $alias = $self->{alias};
 
     my $key;
     for my $arg (@{$self->{args}}) {
         if ($arg =~ /^--(\w+)=(.+)$/) {
-            $argv->{$1} = $2;
+            my $option = $alias->{$1} // $1;
+            $argv->{$option} = $2;
         }
         elsif ($arg =~ /^-(\w+)$/) {
             if ($key) {
                 $argv->{$key} = 1;
             }
-            $key = $1;
+            my $option = $alias->{$1} // $1;
+            $key = $option;
         }
         elsif ($arg =~ /^--(\w+)$/) {
             if ($key) {
                 $argv->{$key} = 1;
                 $key = undef;
             }
-            $argv->{$1} = 1;
+            my $option = $alias->{$1} // $1;
+            $argv->{$option} = 1;
         }
         else {
             if ($key) {
