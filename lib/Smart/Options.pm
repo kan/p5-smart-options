@@ -60,9 +60,9 @@ sub help {
     my $describe = $self->{describe};
     my $help = $self->{usage} . "\n";
 
-    if (scalar(keys $demand) or scalar(keys $describe)) {
+    if (scalar(keys %$demand) or scalar(keys %$describe)) {
         my @opts;
-        for my $opt (uniq sort keys $demand, keys $describe) {
+        for my $opt (uniq sort keys %$demand, keys %$describe) {
             push @opts, [
                 (length($opt) == 1 ? '-' : '--') . $opt,
                 $describe->{$opt} || '',
@@ -130,7 +130,7 @@ sub argv {
     }
     $argv->{_} = \@args;
 
-    for my $opt (keys $self->{demand}) {
+    for my $opt (keys %{$self->{demand}}) {
         if (!$argv->{$opt}) {
             $self->showHelp;
             print STDERR "\nMissing required arguments: $opt\n";
