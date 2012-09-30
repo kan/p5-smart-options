@@ -7,24 +7,27 @@ our $VERSION = '0.01';
 sub new {
     my $pkg = shift;
 
-    bless { args => \@_, alias => {} }, $pkg;
+    bless { args => \@_, alias => {}, default => {} }, $pkg;
 }
 
-sub alias {
-    my $self = shift;
+sub _set {
+    my ($self, $param) = @_;
 
     my %args = @_;
     for my $option (keys %args) {
-        $self->{alias}->{$option} = $args{$option};
+        $self->{$param}->{$option} = $args{$option};
     }
 
     $self;
 }
 
+sub alias   { shift->_set('alias', @_) }
+sub default { shift->_set('default', @_) }
+
 sub argv {
     my $self = shift;
 
-    my $argv = {};
+    my $argv = \%{$self->{default}};
     my @args;
     my $alias = $self->{alias};
 
