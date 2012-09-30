@@ -4,7 +4,19 @@ use warnings;
 use 5.010001;
 our $VERSION = '0.01';
 
+sub parse {
+    my $argv = {};
 
+    for my $arg (@_) {
+        if ($arg =~ /^--(\w+)=(.+)$/) {
+            $argv->{$1} = $2;
+        }
+    }
+
+    $argv;
+}
+
+sub argv { parse(@ARGV) }
 
 1;
 __END__
