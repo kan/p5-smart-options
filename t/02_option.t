@@ -42,8 +42,8 @@ subtest 'demand' => sub {
 Usage: $0 -x [num] -y [num]
 
 Options:
-   -x      [required]
-   -y      [required]
+  -x      [required]  
+  -y      [required]  
 
 Missing required arguments: y
 EOS
@@ -60,12 +60,33 @@ subtest 'describe' => sub {
 Usage: $0 -x [num] -y [num]
 
 Options:
-   -f   Load a file             
-   -x                 [required]
-   -y   year          [required]
+  -f  Load a file                
+  -x                 [required]  
+  -y  year           [required]  
 
 Missing required arguments: y
 EOS
+};
+
+subtest 'options' => sub {
+    my $opts = Smart::Options->new();
+    $opts->usage("Usage: $0 -x [num] -y [num]");
+    $opts->options(
+        f => {
+            alias    => 'file',
+            default  => '/etc/passwd',
+            describe => 'Load a file',
+        }
+    );
+
+    is $opts->help, <<"EOS";
+Usage: $0 -x [num] -y [num]
+
+Options:
+  -f, --file  Load a file      [default: /etc/passwd]
+EOS
+
+    is $opts->argv->{f}, '/etc/passwd';
 };
 
 

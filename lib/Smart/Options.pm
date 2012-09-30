@@ -51,28 +51,56 @@ sub _set_flag {
 sub boolean { shift->_set_flag('boolean', @_) }
 sub demand { shift->_set_flag('demand', @_) }
 
-sub usage { $_[0]->{usage} = $_[1] }
+sub options {
+    my $self = shift;
+
+    my %args = @_;
+    while (my($opt, $setting) = each %args) {
+        for my $key (keys %$setting) {
+            $self->$key($opt, $setting->{$key});
+        }
+    }
+
+    $self;
+}
+
+sub usage { $_[0]->{usage} = $_[1]; $_[0] }
+
+sub _get_opt_desc {
+    my ($self, $option) = @_;
+
+    my $desc = (length($option) == 1 ? '-' : '--') . $option;
+    if (my $alias = $self->{alias}->{$option}) {
+        $desc .= ", " . (length($alias) == 1 ? '-' : '--') . $alias;
+    }
+
+    $desc;
+}
 
 sub help {
     my $self = shift;
 
     my $demand = $self->{demand};
     my $describe = $self->{describe};
+    my $default = $self->{default};
     my $help = $self->{usage} . "\n";
 
     if (scalar(keys %$demand) or scalar(keys %$describe)) {
         my @opts;
         for my $opt (uniq sort keys %$demand, keys %$describe) {
             push @opts, [
-                (length($opt) == 1 ? '-' : '--') . $opt,
+                $self->_get_opt_desc($opt),
                 $describe->{$opt} || '',
-                $demand->{$opt} ? "[required]" : '',
+                $self->{boolean}->{$opt} ? '[boolean]' : '',
+                $demand->{$opt} ? '[required]' : '',
+                $default->{$opt} ? "[default: @{[$default->{$opt}]}]" : '',
             ];
         }
 
-        my $sep = \'   ';
+        my $sep = \'  ';
         $help .= "\nOptions:\n";
-        $help .= Text::Table->new($sep, '', $sep, '', $sep, '')->load(@opts)->stringify;
+        $help .= Text::Table->new( $sep, '', $sep, '', $sep, '', $sep, '', $sep, '' )
+                            ->load(@opts)->stringify;
     }
 }
 
@@ -87,7 +115,7 @@ sub showHelp {
 sub argv {
     my $self = shift;
 
-    my $argv = \%{$self->{default}};
+    my $argv = {%{$self->{default}}};
     my @args;
     my $alias = $self->{alias};
     my $boolean = $self->{boolean};
