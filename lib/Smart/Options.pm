@@ -4,14 +4,24 @@ use warnings;
 use 5.010001;
 our $VERSION = '0.01';
 
+use Text::Table;
+
 sub new {
     my $pkg = shift;
 
-    bless { args => \@_, alias => {}, default => {}, boolean => {} }, $pkg;
+    bless {
+        args    => \@_,
+        alias   => {},
+        default => {},
+        boolean => {},
+        demand  => {},
+        usage   => "Usage: $0",
+    }, $pkg;
 }
 
 sub _set {
-    my ($self, $param) = @_;
+    my $self = shift;
+    my $param = shift;
 
     my %args = @_;
     for my $option (keys %args) {
@@ -24,14 +34,49 @@ sub _set {
 sub alias   { shift->_set('alias', @_) }
 sub default { shift->_set('default', @_) }
 
-sub boolean {
+sub _set_flag {
     my $self = shift;
+    my $param = shift;
 
     for my $option (@_) {
-        $self->{boolean}->{$option} = 1;
+        $self->{$param}->{$option} = 1;
     }
 
     $self;
+}
+
+sub boolean { shift->_set_flag('boolean', @_) }
+sub demand { shift->_set_flag('demand', @_) }
+
+sub usage { $_[0]->{usage} = $_[1] }
+
+sub help {
+    my $self = shift;
+
+    my $help = $self->{usage} . "\n";
+
+    if (scalar(keys $self->{demand})) {
+        my @opts;
+        for my $opt (sort keys $self->{demand}) {
+            push @opts, [
+                (length($opt) == 1 ? '-' : '--') . $opt,
+                # alias, describe
+                "[required]",
+            ];
+        }
+
+        my $sep = \'   ';
+        $help .= "\nOptions:\n";
+        $help .= Text::Table->new($sep, '', $sep, '', $sep, '')->load(@opts)->stringify;
+    }
+}
+
+sub showHelp {
+    my ($self, $fh) = @_;
+    $fh //= *STDERR;
+
+    print $fh $self->help;
+
 }
 
 sub argv {
@@ -79,6 +124,14 @@ sub argv {
         }
     }
     $argv->{_} = \@args;
+
+    for my $opt (keys $self->{demand}) {
+        if (!$argv->{$opt}) {
+            $self->showHelp;
+            print STDERR "\nMissing required arguments: $opt\n";
+            die;
+        }
+    }
 
     $argv;
 }
