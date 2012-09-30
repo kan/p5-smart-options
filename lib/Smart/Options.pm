@@ -4,18 +4,20 @@ use warnings;
 use 5.010001;
 our $VERSION = '0.01';
 
+use List::MoreUtils qw(uniq);
 use Text::Table;
 
 sub new {
     my $pkg = shift;
 
     bless {
-        args    => \@_,
-        alias   => {},
-        default => {},
-        boolean => {},
-        demand  => {},
-        usage   => "Usage: $0",
+        args     => \@_,
+        alias    => {},
+        default  => {},
+        boolean  => {},
+        demand   => {},
+        usage    => "Usage: $0",
+        describe => {},
     }, $pkg;
 }
 
@@ -31,8 +33,9 @@ sub _set {
     $self;
 }
 
-sub alias   { shift->_set('alias', @_) }
+sub alias { shift->_set('alias', @_) }
 sub default { shift->_set('default', @_) }
+sub describe { shift->_set('describe', @_) }
 
 sub _set_flag {
     my $self = shift;
@@ -53,15 +56,17 @@ sub usage { $_[0]->{usage} = $_[1] }
 sub help {
     my $self = shift;
 
+    my $demand = $self->{demand};
+    my $describe = $self->{describe};
     my $help = $self->{usage} . "\n";
 
-    if (scalar(keys $self->{demand})) {
+    if (scalar(keys $demand) or scalar(keys $describe)) {
         my @opts;
-        for my $opt (sort keys $self->{demand}) {
+        for my $opt (uniq sort keys $demand, keys $describe) {
             push @opts, [
                 (length($opt) == 1 ? '-' : '--') . $opt,
-                # alias, describe
-                "[required]",
+                $describe->{$opt} || '',
+                $demand->{$opt} ? "[required]" : '',
             ];
         }
 

@@ -38,13 +38,31 @@ subtest 'demand' => sub {
     $opts->demand('x', 'y');
 
     my $out = capture_stderr { try { $opts->argv } };
-    #my $out = capture_stderr { $opts->argv };
     is $out, <<"EOS";
 Usage: $0 -x [num] -y [num]
 
 Options:
-   -x   [required]   
-   -y   [required]   
+   -x      [required]
+   -y      [required]
+
+Missing required arguments: y
+EOS
+};
+
+subtest 'describe' => sub {
+    my $opts = Smart::Options->new(qw(-x 4.91 -z 2.51));
+    $opts->usage("Usage: $0 -x [num] -y [num]");
+    $opts->demand('x', 'y');
+    $opts->describe(f => 'Load a file', y => 'year');
+
+    my $out = capture_stderr { try { $opts->argv } };
+    is $out, <<"EOS";
+Usage: $0 -x [num] -y [num]
+
+Options:
+   -f   Load a file             
+   -x                 [required]
+   -y   year          [required]
 
 Missing required arguments: y
 EOS
