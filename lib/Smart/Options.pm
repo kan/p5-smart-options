@@ -7,9 +7,19 @@ our $VERSION = '0.01';
 sub parse {
     my $argv = {};
 
+    my $key;
     for my $arg (@_) {
         if ($arg =~ /^--(\w+)=(.+)$/) {
             $argv->{$1} = $2;
+        }
+        elsif ($arg =~ /^-(\w+)$/) {
+            $key = $1;
+        }
+        else {
+            if ($key) {
+                $argv->{$key} = $arg;
+                $key = undef; # reset
+            }
         }
     }
 
