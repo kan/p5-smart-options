@@ -13,7 +13,17 @@ sub parse {
             $argv->{$1} = $2;
         }
         elsif ($arg =~ /^-(\w+)$/) {
+            if ($key) {
+                $argv->{$key} = 1;
+            }
             $key = $1;
+        }
+        elsif ($arg =~ /^--(\w+)$/) {
+            if ($key) {
+                $argv->{$key} = 1;
+                $key = undef;
+            }
+            $argv->{$1} = 1;
         }
         else {
             if ($key) {

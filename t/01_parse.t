@@ -17,4 +17,12 @@ subtest 'short option' => sub {
     is $opts->{y}, 21;
 };
 
+subtest 'boolean option' => sub {
+    my $opts = Smart::Options::parse(qw(-s --fr));
+
+    ok $opts->{s};
+    ok $opts->{fr};
+    ok !$opts->{sp};
+};
+
 done_testing;
