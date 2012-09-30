@@ -4,12 +4,20 @@ use warnings;
 use 5.010001;
 our $VERSION = '0.01';
 
-sub parse {
+sub new {
+    my $pkg = shift;
+
+    bless { args => \@_ }, $pkg;
+}
+
+sub argv {
+    my $self = shift;
+
     my $argv = {};
     my @args;
 
     my $key;
-    for my $arg (@_) {
+    for my $arg (@{$self->{args}}) {
         if ($arg =~ /^--(\w+)=(.+)$/) {
             $argv->{$1} = $2;
         }
@@ -41,7 +49,6 @@ sub parse {
     $argv;
 }
 
-sub argv { parse(@ARGV) }
 
 1;
 __END__
