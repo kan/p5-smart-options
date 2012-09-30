@@ -6,6 +6,7 @@ our $VERSION = '0.01';
 
 sub parse {
     my $argv = {};
+    my @args;
 
     my $key;
     for my $arg (@_) {
@@ -30,8 +31,12 @@ sub parse {
                 $argv->{$key} = $arg;
                 $key = undef; # reset
             }
+            else {
+                push @args, $arg;
+            }
         }
     }
+    $argv->{_} = \@args;
 
     $argv;
 }

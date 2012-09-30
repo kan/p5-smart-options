@@ -25,4 +25,18 @@ subtest 'boolean option' => sub {
     ok !$opts->{sp};
 };
 
+subtest 'non-hyponated options' => sub {
+    my $opts = Smart::Options::parse(qw(-x 6.82 -y 3.35 moo));
+
+    is $opts->{x}, 6.82;
+    is $opts->{y}, 3.35;
+    is_deeply $opts->{_}, ['moo'];
+
+    my $opts2 = Smart::Options::parse(qw(foo -x 0.54 bar -y 1.12 baz));
+
+    is $opts2->{x}, 0.54;
+    is $opts2->{y}, 1.12;
+    is_deeply $opts2->{_}, ['foo','bar','baz'];
+};
+
 done_testing;
