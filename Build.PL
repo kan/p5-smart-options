@@ -18,7 +18,7 @@ my $build = Module::Build->new(
         # 'Exporter'                      => '0',
         'parent'                        => '0',
         'Text::Table'       => 0,
-        'List::More::Utils' => 0,
+        'List::MoreUtils' => 0,
     },
 
     no_index    => { 'directory' => [ 'inc' ] },
