@@ -20,4 +20,14 @@ subtest 'default' => sub {
     is $opts->argv->{y}, 10;
 };
 
+subtest 'boolean' => sub {
+    my $opts = Smart::Options->new(qw(-x -z one two three));
+    $opts->boolean('x', 'y', 'z');
+
+    ok $opts->argv->{x};
+    ok !$opts->argv->{y};
+    ok $opts->argv->{z};
+    is_deeply $opts->argv->{_}, [qw(one two three)];
+};
+
 done_testing;

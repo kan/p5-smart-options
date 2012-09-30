@@ -7,7 +7,7 @@ our $VERSION = '0.01';
 sub new {
     my $pkg = shift;
 
-    bless { args => \@_, alias => {}, default => {} }, $pkg;
+    bless { args => \@_, alias => {}, default => {}, boolean => {} }, $pkg;
 }
 
 sub _set {
@@ -24,12 +24,23 @@ sub _set {
 sub alias   { shift->_set('alias', @_) }
 sub default { shift->_set('default', @_) }
 
+sub boolean {
+    my $self = shift;
+
+    for my $option (@_) {
+        $self->{boolean}->{$option} = 1;
+    }
+
+    $self;
+}
+
 sub argv {
     my $self = shift;
 
     my $argv = \%{$self->{default}};
     my @args;
     my $alias = $self->{alias};
+    my $boolean = $self->{boolean};
 
     my $key;
     for my $arg (@{$self->{args}}) {
@@ -42,7 +53,12 @@ sub argv {
                 $argv->{$key} = 1;
             }
             my $option = $alias->{$1} // $1;
-            $key = $option;
+            if ($boolean->{$option}) {
+                $argv->{$option} = 1;
+            }
+            else {
+                $key = $option;
+            }
         }
         elsif ($arg =~ /^--(\w+)$/) {
             if ($key) {
