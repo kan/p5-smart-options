@@ -121,7 +121,12 @@ sub argv {
     my $boolean = $self->{boolean};
 
     my $key;
+    my $stop = 0;
     for my $arg (@{$self->{args}}) {
+        if ($stop) {
+            push @args, $arg;
+            next;
+        }
         if ($arg =~ /^--(\w+)=(.+)$/) {
             my $option = $alias->{$1} // $1;
             $argv->{$option} = $2;
@@ -145,6 +150,11 @@ sub argv {
             }
             my $option = $alias->{$1} // $1;
             $argv->{$option} = 1;
+        }
+        elsif ($arg =~ /^--$/) {
+            # stop parsing
+            $stop = 1;
+            next;
         }
         else {
             if ($key) {
