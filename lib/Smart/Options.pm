@@ -149,7 +149,12 @@ sub argv {
                 $key = undef;
             }
             my $option = $alias->{$1} // $1;
-            $argv->{$option} = 1;
+            if ($option =~ /^no-(.+)$/) {
+                $argv->{$1} = 0;
+            }
+            else {
+                $argv->{$option} = 1;
+            }
         }
         elsif ($arg =~ /^--$/) {
             # stop parsing

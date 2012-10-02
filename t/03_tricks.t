@@ -11,4 +11,11 @@ subtest 'stop parsing' => sub {
     is_deeply $argv->{_}, ['-c', '3', '-d', '4'];
 };
 
+subtest 'negate fields' => sub {
+    my $argv = Smart::Options->new(qw(-a --no-b))->argv;
+
+    ok $argv->{a};
+    ok !$argv->{b};
+};
+
 done_testing;
