@@ -112,10 +112,26 @@ sub showHelp {
 
 }
 
+sub _set_v2a {
+    my ($argv, $key, $value) = @_;
+
+    if (exists $argv->{$key}) {
+        if (ref($argv->{$key})) {
+            push @{$argv->{$key}}, $value;
+        }
+        else {
+            $argv->{$key} = [ $argv->{$key}, $value ];
+        }
+    }
+    else {
+        $argv->{$key} = $value;
+    }
+}
+
 sub argv {
     my $self = shift;
 
-    my $argv = {%{$self->{default}}};
+    my $argv = {};
     my @args;
     my $alias = $self->{alias};
     my $boolean = $self->{boolean};
@@ -129,7 +145,7 @@ sub argv {
         }
         if ($arg =~ /^--(\w+)=(.+)$/) {
             my $option = $alias->{$1} // $1;
-            $argv->{$option} = $2;
+            _set_v2a($argv, $option, $2);
         }
         elsif ($arg =~ /^-(\w+)$/) {
             if ($key) {
@@ -163,7 +179,7 @@ sub argv {
         }
         else {
             if ($key) {
-                $argv->{$key} = $arg;
+                _set_v2a($argv, $key, $arg);
                 $key = undef; # reset
             }
             else {
@@ -172,6 +188,10 @@ sub argv {
         }
     }
     $argv->{_} = \@args;
+
+    while (my ($key, $val) = each %{$self->{default}}) {
+        $argv->{$key} //= $val;
+    }
 
     for my $opt (keys %{$self->{demand}}) {
         if (!$argv->{$opt}) {

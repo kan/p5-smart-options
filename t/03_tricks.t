@@ -18,4 +18,10 @@ subtest 'negate fields' => sub {
     ok !$argv->{b};
 };
 
+subtest 'duplicates' => sub {
+    my $argv = Smart::Options->new(qw(-x 5 -x 8 -x 0))->argv;
+
+    is_deeply $argv->{x}, [5, 8, 0];
+};
+
 done_testing;
