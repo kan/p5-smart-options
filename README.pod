@@ -1,1 +1,120 @@
-lib/Smart/Options.pm
+=encoding utf8
+
+=head1 NAME
+
+Smart::Options - smart command line options processor
+
+=head1 SYNOPSIS
+
+  use Smart::Options;
+
+  my $argv = Smart::Options->new->argv;
+
+  if ($argv->{rif} - 5 * $argv->{xup} > 7.138) {
+      say 'Buy more fiffiwobbles';
+  }
+  else {
+     say 'Sell the xupptumblers';
+  }
+
+  # $ ./example.pl --rif=55 --xup=9.52
+  # Buy more fiffiwobbles
+  #
+  # $ ./example.pl --rif 12 --xup 8.1
+  # Sell the xupptumblers
+
+=head1 DESCRIPTION
+
+Smart::Options is a library for option parsing for people tired option parsing.
+This module is analyzed as people interpret an option intuitively.
+
+```<img src="https://secure.travis-ci.org/kan/p5-smart-options.png" />```
+
+=head1 METHOD
+
+=head2 new(@ARGS)
+
+Create a parser object. @ARGS is command line args. if @ARGS is empty, Smart::Options use @ARGV.
+
+  use Smart::Options;
+
+  my $argv = Smart::Options->new(qw(-x 10 -y 2))->argv;
+
+=head2 alias($alias, $option)
+
+set alias for option. you can use "$option" field of argv.
+
+  use Smart::Options;
+  
+  my $argv = Smart::Options->new(qw(-f /etc/hosts))->alias(f => 'file')->argv;
+  $argv->{file} # => '/etc/hosts'
+
+=head2 default($option, $default_value)
+
+set default value for option.
+
+  use Smart::Options;
+  
+  my $argv = Smart::Options->new(qw(-x 10))->default(y => 5)->argv;
+  $argv->{x} + $argv->{y} # => 15
+
+=head2 describe($option, $msg)
+
+set option help message.
+
+  use Smart::Options;
+  my $opt = Smart::Options->new()->alias(f => 'file')->describe('Load a file');
+  say $opt->help;
+
+  # Usage: ./example.pl
+  #
+  # Options:
+  #    -f, --file  Load a file
+  #
+
+=head2 boolean($option, $option2, ...)
+
+interpret 'option' as a boolean.
+
+  use Smart::Options;
+  
+  my $argv = Smart::Options->new(qw(-x 11 -y 10))->argv;
+  $argv->{x} # => 11
+  
+  my $argv2 = Smart::Options->new(qw(-x 11 -y 10))->boolean('x')->argv;
+  $argv2->{x} # => true (1)
+
+=head2 demand($option, $option2, ...)
+
+show usage (showHelp()) and exit if $option wasn't specified in args.
+
+  use Smart::Options;
+  my $opt = Smart::Options->new()->alias(f => 'file')
+                                 ->demand('file')
+                                 ->describe('Load a file');
+  $opt->argv(); # => exit
+
+  # Usage: ./example.pl
+  #
+  # Options:
+  #    -f, --file  Load a file [required]
+  #
+
+=head1 AUTHOR
+
+Kan Fushihara E<lt>kan.fushihara@gmail.comE<gt>
+
+=head1 SEE ALSO
+
+https://github.com/substack/node-optimist
+
+L<GetOpt::Casual>, L<opts>, L<GetOpt::Compat::WithCmd>
+
+=head1 LICENSE
+
+Copyright (C) Kan Fushihara
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
