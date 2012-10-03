@@ -28,7 +28,9 @@ Smart::Options - smart command line options processor
 Smart::Options is a library for option parsing for people tired option parsing.
 This module is analyzed as people interpret an option intuitively.
 
-```<img src="https://secure.travis-ci.org/kan/p5-smart-options.png" />```
+=begin html
+<img src="https://secure.travis-ci.org/kan/p5-smart-options.png" />
+=end html
 
 =head1 METHOD
 
