@@ -59,3 +59,4 @@ Miyashita
 mysqldiff
 mmm
 argv
+STDERR
