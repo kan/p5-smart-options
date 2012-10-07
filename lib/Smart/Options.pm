@@ -147,29 +147,17 @@ sub argv {
             my $option = $alias->{$1} // $1;
             _set_v2a($argv, $option, $2);
         }
-        elsif ($arg =~ /^-(\w+)$/) {
+        elsif ($arg =~ /^(-(\w+)|--(\w+))$/) {
             if ($key) {
                 $argv->{$key} = 1;
             }
-            my $option = $alias->{$1} // $1;
+            my $opt = $2 // $3;
+            my $option = $alias->{$opt} // $opt;
             if ($boolean->{$option}) {
                 $argv->{$option} = 1;
             }
             else {
                 $key = $option;
-            }
-        }
-        elsif ($arg =~ /^--(\w+)$/) {
-            if ($key) {
-                $argv->{$key} = 1;
-                $key = undef;
-            }
-            my $option = $alias->{$1} // $1;
-            if ($option =~ /^no-(.+)$/) {
-                $argv->{$1} = 0;
-            }
-            else {
-                $argv->{$option} = 1;
             }
         }
         elsif ($arg =~ /^--$/) {
@@ -186,6 +174,9 @@ sub argv {
                 push @args, $arg;
             }
         }
+    }
+    if ($key) {
+        $argv->{$key} = 1;
     }
     $argv->{_} = \@args;
 
