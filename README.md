@@ -24,9 +24,9 @@ else {
 
 ***
 
-  $ ./example.pl --rif=55 --xup=9.52
-  Buy more fiffiwobbles
-  
-  $ ./example.pl --rif 12 --xup 8.1
-  Sell the xupptumblers
+>   $ ./example.pl --rif=55 --xup=9.52
+>   Buy more fiffiwobbles
+>   
+>   $ ./example.pl --rif 12 --xup 8.1
+>   Sell the xupptumblers
 
