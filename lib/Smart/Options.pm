@@ -349,6 +349,43 @@ return help message string
 
 print usage message. default output STDERR.
 
+=head1 PARSING TRICKS
+
+=head2 stop parsing
+
+use '--' to stop parsing.
+
+  use Smart::Options;
+  use Data::Dumper;
+
+  my $argv = argv(qw(-a 1 -b 2 -- -c 3 -d 4));
+  warn Dumper($argv);
+
+  # $VAR1 = {
+  #        'a' => '1',
+  #        'b' => '2',
+  #        '_' => [
+  #                 '-c',
+  #                 '3',
+  #                 '-d',
+  #                 '4'
+  #               ]
+  #      };
+
+=head2 negate fields
+
+'--no-key' set false to $key.
+
+  use Smart::Options;
+  argv(qw(-a --no-b))->{b}; # => 0
+
+=head2 duplicates
+
+If set flag multiple times it will get arrayref.
+
+  use Smart::Options;
+  argv(qw(-x 1 -x 2 -x 3))->{x}; # => [1, 2, 3]
+
 =head1 AUTHOR
 
 Kan Fushihara E<lt>kan.fushihara@gmail.comE<gt>
