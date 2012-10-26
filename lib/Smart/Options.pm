@@ -21,6 +21,7 @@ sub new {
         demand   => {},
         usage    => "Usage: $0",
         describe => {},
+        subcmd   => {},
     }, $pkg;
 }
 
@@ -43,6 +44,7 @@ sub _set {
 sub alias { shift->_set('alias', @_) }
 sub default { shift->_set('default', @_) }
 sub describe { shift->_set('describe', @_) }
+sub subcmd { shift->_set('subcmd', @_) }
 
 sub _set_flag {
     my $self = shift;
@@ -143,6 +145,19 @@ sub parse {
     my @args;
     my $alias = $self->{alias};
     my $boolean = $self->{boolean};
+
+    if (keys %{$self->{subcmd}}) {
+        my $cmd = shift @_;
+        if ( my $parser = $self->{subcmd}->{$cmd} ) {
+            return {
+                command => $cmd,
+                option  => $parser->parse(@_),
+            };
+        }
+        else {
+            die "sub command '$cmd' not defined.";
+        }
+    }
 
     my $key;
     my $stop = 0;

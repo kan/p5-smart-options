@@ -13,6 +13,7 @@ t/01_parse.t
 t/02_option.t
 t/03_tricks.t
 t/04_argv.t
+t/05_subcmd.t
 t/Utils.pm
 xt/01_podspell.t
 xt/02_perlcritic.t
