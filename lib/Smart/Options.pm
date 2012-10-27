@@ -204,7 +204,12 @@ sub parse {
     $argv->{_} = \@args;
 
     while (my ($key, $val) = each %{$self->{default}}) {
-        $argv->{$key} //= $val;
+        if (ref($val) && ref($val) eq 'CODE') {
+            $argv->{$key} //= $val->();
+        }
+        else {
+            $argv->{$key} //= $val;
+        }
     }
 
     for my $opt (keys %{$self->{demand}}) {
