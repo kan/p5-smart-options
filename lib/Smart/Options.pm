@@ -166,11 +166,12 @@ sub parse {
             push @args, $arg;
             next;
         }
-        if ($arg =~ /^--(\w+)=(.+)$/) {
+        if ($arg =~ /^--((?:\w|-)+)=(.+)$/) {
             my $option = $alias->{$1} // $1;
+            warn "$option : $1";
             _set_v2a($argv, $option, $2);
         }
-        elsif ($arg =~ /^(-(\w+)|--(\w+))$/) {
+        elsif ($arg =~ /^(-((?:\w|-)+)|--((?:\w|-)+))$/) {
             if ($key) {
                 $argv->{$key} = 1;
             }
