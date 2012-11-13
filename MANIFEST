@@ -2,6 +2,7 @@
 Build.PL
 Changes
 lib/Smart/Options.pm
+lib/Smart/Options/Declare.pm
 LICENSE
 MANIFEST			This list of files
 META.json
@@ -14,6 +15,16 @@ t/02_option.t
 t/03_tricks.t
 t/04_argv.t
 t/05_subcmd.t
+t/declare/01_basic.t
+t/declare/02_type.t
+t/declare/03_required.t
+t/declare/04_default.t
+t/declare/05_methods.t
+t/declare/06_required_tc.t
+t/declare/07_create_tc.t
+t/declare/08_alias.t
+t/declare/09_names_with_underscore.t
+t/declare/10_help.t
 t/Utils.pm
 xt/01_podspell.t
 xt/02_perlcritic.t
