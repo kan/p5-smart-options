@@ -1,4 +1,8 @@
 Revision history for Perl extension Smart::Options
 
+0.02   Tue Nov  13 21:16:21
+    - support subcommand like GetOpt::Compat::WithCmd
+    - support DSL like opts (Smart::Options::Declare)
+
 0.01   Sun Oct  07 13:23:11 
     - original version

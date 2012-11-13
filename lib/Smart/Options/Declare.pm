@@ -92,7 +92,7 @@ Smart::Options::Declare - DSL for Smart::Options
 
   use Smart::Options::Declare;
 
-  opts my $rif => 'Int', my $xup => 'Float';
+  opts my $rif, my $xup;
 
   if ($rif - 5 * $xup > 7.138) {
       say 'Buy more fiffiwobbles';

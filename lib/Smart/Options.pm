@@ -2,7 +2,7 @@ package Smart::Options;
 use strict;
 use warnings;
 use 5.010001;
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 require Exporter;
 our @ISA = qw(Exporter);
@@ -426,6 +426,19 @@ return help message string
 =head2 showHelp($fh)
 
 print usage message. default output STDERR.
+
+=head2 subcmd($cmd => $parser)
+
+set a sub command. $parser is another Smart::Option object.
+
+  use Smart::Options;
+  my $opt = Smart::Options->new()
+              ->subcmd(add => Smart::Options->new())
+              ->subcmd(minus => Smart::Options->new());
+
+=head1 DSL
+
+see also L<Smart::Options::Declare>
 
 =head1 PARSING TRICKS
 
