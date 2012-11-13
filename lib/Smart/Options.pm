@@ -13,8 +13,9 @@ use Text::Table;
 
 sub new {
     my $pkg = shift;
+    my %opt = @_;
 
-    bless {
+    my $self = bless {
         alias    => {},
         default  => {},
         boolean  => {},
@@ -23,6 +24,16 @@ sub new {
         describe => {},
         subcmd   => {},
     }, $pkg;
+
+    if ($opt{add_help} // 1) {
+        $self->options(h => {
+                alias => 'help',
+                describe => 'show help',
+            });
+        $self->{add_help} = 1;
+    }
+
+    $self;
 }
 
 sub argv {
@@ -89,18 +100,20 @@ sub _get_opt_desc {
 sub help {
     my $self = shift;
 
+    my $alias = $self->{alias};
     my $demand = $self->{demand};
     my $describe = $self->{describe};
     my $default = $self->{default};
+    my $boolean = $self->{boolean};
     my $help = $self->{usage} . "\n";
 
     if (scalar(keys %$demand) or scalar(keys %$describe)) {
         my @opts;
-        for my $opt (uniq sort keys %$demand, keys %$describe) {
+        for my $opt (uniq sort keys %$demand, keys %$describe, keys %$default, keys %$boolean, keys %$alias) {
             push @opts, [
                 $self->_get_opt_desc($opt),
                 $describe->{$opt} || '',
-                $self->{boolean}->{$opt} ? '[boolean]' : '',
+                $boolean->{$opt} ? '[boolean]' : '',
                 $demand->{$opt} ? '[required]' : '',
                 $default->{$opt} ? "[default: @{[$default->{$opt}]}]" : '',
             ];
@@ -218,6 +231,11 @@ sub parse {
             print STDERR "\nMissing required arguments: $opt\n";
             die;
         }
+    }
+
+    if ($argv->{help} && $self->{add_help}) {
+        $self->showHelp;
+        die;
     }
 
     $argv;

@@ -34,7 +34,7 @@ subtest 'boolean' => sub {
 };
 
 subtest 'demand' => sub {
-    my $opts = Smart::Options->new
+    my $opts = Smart::Options->new(add_help => 0)
                     ->usage("Usage: $0 -x [num] -y [num]")
                     ->demand('x', 'y');
 
@@ -51,7 +51,7 @@ EOS
 };
 
 subtest 'describe' => sub {
-    my $opts = Smart::Options->new
+    my $opts = Smart::Options->new(add_help => 0)
                     ->usage("Usage: $0 -x [num] -y [num]")
                     ->demand('x', 'y')
                     ->describe(f => 'Load a file', y => 'year');
@@ -70,7 +70,7 @@ EOS
 };
 
 subtest 'options' => sub {
-    my $opts = Smart::Options->new();
+    my $opts = Smart::Options->new(add_help => 0);
     $opts->usage("Usage: $0 -x [num] -y [num]");
     $opts->options(
         f => {
