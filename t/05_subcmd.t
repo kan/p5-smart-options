@@ -7,11 +7,32 @@ subtest 'support subcommand' => sub {
     my $opt = Smart::Options->new();
     $opt->subcmd(add => Smart::Options->new()->demand(qw(x y)));
     $opt->subcmd(minus => Smart::Options->new()->demand(qw(x y)));
-    my $argv = $opt->parse(qw(add -x 10 -y 5));
+    $opt->boolean('u');
+    my $argv = $opt->parse(qw(-u add -x 10 -y 5));
 
+    is $argv->{u}, 1;
     is $argv->{command}, 'add';
-    is $argv->{option}->{x}, 10;
-    is $argv->{option}->{y}, 5;
+    is $argv->{cmd_option}->{x}, 10;
+    is $argv->{cmd_option}->{y}, 5;
+};
+
+subtest 'subcommand usage' => sub {
+    my $opt = Smart::Options->new();
+    $opt->usage("Usage: $0 [option] COMMAND");
+    $opt->subcmd(add => Smart::Options->new()->demand(qw(x y)));
+    $opt->subcmd(minus => Smart::Options->new()->demand(qw(x y)));
+    $opt->boolean('u');
+    is $opt->help, <<"EOS", 'subcmd help';
+Usage: t/05_subcmd.t [option] COMMAND
+
+Options:
+  -h, --help  Show help               
+  -u                     [boolean]    
+
+Implemented commands are:
+  add, minus
+
+EOS
 };
 
 

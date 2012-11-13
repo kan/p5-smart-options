@@ -146,6 +146,10 @@ sub help {
         $help .= "\nOptions:\n";
         $help .= Text::Table->new( $sep, '', $sep, '', $sep, '', $sep, '', $sep, '' )
                             ->load(@opts)->stringify . "\n";
+        if (keys %{$self->{subcmd}}) {
+            $help .= "Implemented commands are:\n";
+            $help .= "  " . join(', ', sort keys %{$self->{subcmd}}) . "\n\n";
+        }
     }
 }
 
@@ -190,19 +194,6 @@ sub parse {
     my @args;
     my $boolean = $self->{boolean};
 
-    if (keys %{$self->{subcmd}}) {
-        my $cmd = shift @_;
-        if ( my $parser = $self->{subcmd}->{$cmd} ) {
-            return {
-                command => $cmd,
-                option  => $parser->parse(@_),
-            };
-        }
-        else {
-            die "sub command '$cmd' not defined.";
-        }
-    }
-
     my $key;
     my $stop = 0;
     for my $arg (@_) {
@@ -238,6 +229,17 @@ sub parse {
                 $key = undef; # reset
             }
             else {
+                if (!scalar(@args) && keys %{$self->{subcmd}}) {
+                    if ( $self->{subcmd}->{$arg} ) {
+                        $argv->{command} = $arg;
+                        $stop = 1;
+                        next;
+                    }
+                    else {
+                        die "sub command '$arg' not defined.";
+                    }
+                }
+
                 push @args, $arg;
             }
         }
@@ -245,7 +247,12 @@ sub parse {
     if ($key) {
         $argv->{$key} = 1;
     }
-    $argv->{_} = \@args;
+
+    if (my $parser = $self->{subcmd}->{$argv->{command}||''}) {
+        $argv->{cmd_option} = $parser->parse(@args);
+    } else {
+        $argv->{_} = \@args;
+    }
 
     while (my ($key, $val) = each %{$self->{default}}) {
         if (ref($val) && ref($val) eq 'CODE') {
