@@ -151,6 +151,8 @@ sub help {
             $help .= "  " . join(', ', sort keys %{$self->{subcmd}}) . "\n\n";
         }
     }
+
+    $help;
 }
 
 sub showHelp {
