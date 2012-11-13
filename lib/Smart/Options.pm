@@ -89,12 +89,34 @@ sub usage { $_[0]->{usage} = $_[1]; $_[0] }
 sub _get_opt_desc {
     my ($self, $option) = @_;
 
-    my $desc = (length($option) == 1 ? '-' : '--') . $option;
-    if (my $alias = $self->{alias}->{$option}) {
-        $desc .= ", " . (length($alias) == 1 ? '-' : '--') . $alias;
+    my @opts = ($option);
+    while ( my($opt, $val) = each %{$self->{alias}} ) {
+        push @opts, $opt if $val eq $option;
     }
 
-    $desc;
+    return join(', ', map { (length($_) == 1 ? '-' : '--') . $_ } sort @opts);
+}
+
+sub _get_describe {
+    my ($self, $option) = @_;
+
+    my $desc = $self->{describe}->{$option};
+    while ( my($opt, $val) = each %{$self->{alias}} ) {
+        $desc ||= $self->{describe}->{$opt} if $val eq $option;
+    }
+
+    return $desc ? ucfirst($desc) : '';
+}
+
+sub _get_default {
+    my ($self, $option) = @_;
+
+    my $value = $self->{default}->{$option};
+    while ( my($opt, $val) = each %{$self->{alias}} ) {
+        $value ||= $self->{default}->{$opt} if $val eq $option;
+    }
+
+    $value;
 }
 
 sub help {
@@ -109,20 +131,21 @@ sub help {
 
     if (scalar(keys %$demand) or scalar(keys %$describe)) {
         my @opts;
-        for my $opt (uniq sort keys %$demand, keys %$describe, keys %$default, keys %$boolean, keys %$alias) {
+        for my $opt (uniq sort keys %$demand, keys %$describe, keys %$default, keys %$boolean, values %$alias) {
+            next if $alias->{$opt};
             push @opts, [
                 $self->_get_opt_desc($opt),
-                $describe->{$opt} || '',
+                $self->_get_describe($opt),
                 $boolean->{$opt} ? '[boolean]' : '',
                 $demand->{$opt} ? '[required]' : '',
-                $default->{$opt} ? "[default: @{[$default->{$opt}]}]" : '',
+                $self->_get_default($opt) ? "[default: @{[$self->_get_default($opt)]}]" : '',
             ];
         }
 
         my $sep = \'  ';
         $help .= "\nOptions:\n";
         $help .= Text::Table->new( $sep, '', $sep, '', $sep, '', $sep, '', $sep, '' )
-                            ->load(@opts)->stringify;
+                            ->load(@opts)->stringify . "\n";
     }
 }
 

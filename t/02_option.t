@@ -46,6 +46,7 @@ Options:
   -x      [required]  
   -y      [required]  
 
+
 Missing required arguments: y
 EOS
 };
@@ -63,7 +64,8 @@ Usage: $0 -x [num] -y [num]
 Options:
   -f  Load a file                
   -x                 [required]  
-  -y  year           [required]  
+  -y  Year           [required]  
+
 
 Missing required arguments: y
 EOS
@@ -85,6 +87,7 @@ Usage: $0 -x [num] -y [num]
 
 Options:
   -f, --file  Load a file      [default: /etc/passwd]
+
 EOS
 
     is $opts->parse()->{f}, '/etc/passwd';
