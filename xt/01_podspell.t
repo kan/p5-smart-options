@@ -60,3 +60,4 @@ mysqldiff
 mmm
 argv
 STDERR
+DSL
