@@ -150,13 +150,21 @@ sub _set_v2a {
     }
 }
 
+sub _get_real_name {
+    my ($self, $opt) = @_;
+
+    while (my $name = $self->{alias}->{$opt}) {
+        $opt = $name;
+    }
+    return $opt;
+}
+
 sub parse {
     my $self = shift;
     push @_, @ARGV unless @_;
 
     my $argv = {};
     my @args;
-    my $alias = $self->{alias};
     my $boolean = $self->{boolean};
 
     if (keys %{$self->{subcmd}}) {
@@ -180,7 +188,7 @@ sub parse {
             next;
         }
         if ($arg =~ /^--((?:\w|-)+)=(.+)$/) {
-            my $option = $alias->{$1} // $1;
+            my $option = $self->_get_real_name($1);
             _set_v2a($argv, $option, $2);
         }
         elsif ($arg =~ /^(-(\w(?:\w|-)*)|--((?:\w|-)+))$/) {
@@ -188,7 +196,7 @@ sub parse {
                 $argv->{$key} = 1;
             }
             my $opt = $2 // $3;
-            my $option = $alias->{$opt} // $opt;
+            my $option = $self->_get_real_name($opt);
             if ($boolean->{$option}) {
                 $argv->{$option} = 1;
             }
