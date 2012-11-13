@@ -144,6 +144,19 @@ return help message string
 
 print usage message. default output STDERR.
 
+## subcmd($cmd => $parser)
+
+set a sub command. $parser is another Smart::Option object.
+
+    use Smart::Options;
+    my $opt = Smart::Options->new()
+                ->subcmd(add => Smart::Options->new())
+                ->subcmd(minus => Smart::Options->new());
+
+# DSL
+
+see also [Smart::Options::Declare](http://search.cpan.org/perldoc?Smart::Options::Declare)
+
 # PARSING TRICKS
 
 ## stop parsing
