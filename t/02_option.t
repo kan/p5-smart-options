@@ -90,7 +90,7 @@ Options:
 
 EOS
 
-    is $opts->parse()->{f}, '/etc/passwd';
+    is $opts->parse()->{file}, '/etc/passwd';
 };
 
 

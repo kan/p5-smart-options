@@ -257,15 +257,17 @@ sub parse {
     }
 
     while (my ($key, $val) = each %{$self->{default}}) {
+        my $opt = $self->_get_real_name($key);
         if (ref($val) && ref($val) eq 'CODE') {
-            $argv->{$key} //= $val->();
+            $argv->{$opt} //= $val->();
         }
         else {
-            $argv->{$key} //= $val;
+            $argv->{$opt} //= $val;
         }
     }
 
-    for my $opt (keys %{$self->{demand}}) {
+    for my $key (keys %{$self->{demand}}) {
+        my $opt = $self->_get_real_name($key);
         if (!$argv->{$opt}) {
             $self->showHelp;
             print STDERR "\nMissing required arguments: $opt\n";
