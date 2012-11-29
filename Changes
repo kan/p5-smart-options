@@ -1,5 +1,9 @@
 Revision history for Perl extension Smart::Options
 
+0.021  Thu Nov  29 12:32:53
+    - fix test_requires and alias bugs (thanks to hayajo)
+     - https://github.com/kan/p5-smart-options/pull/1
+
 0.02   Tue Nov  13 21:16:21
     - support subcommand like GetOpt::Compat::WithCmd
     - support DSL like opts (Smart::Options::Declare)
