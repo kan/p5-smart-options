@@ -12,6 +12,7 @@ my $build = Module::Build->new(
         'Capture::Tiny'   => 0,
         'Try::Tiny'       => 0,
         'Test::Exception' => 0,
+        'File::Spec'      => 0,
     },
     configure_requires   => { 'Module::Build' => '0.38' },
     requires             => {

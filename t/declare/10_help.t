@@ -5,6 +5,9 @@ use Test::More;
 use Try::Tiny;
 use Capture::Tiny ':all';
 
+use File::Spec;
+my $fileName = File::Spec->catfile('t','declare','10_help.t');
+
 my $out = capture_stderr {
     try {
         @ARGV = qw(--help);
@@ -12,8 +15,8 @@ my $out = capture_stderr {
     }
 };
 
-is $out, <<EOS, 'help message';
-Usage: t/declare/10_help.t
+is $out, <<"EOS", 'help message';
+Usage: $fileName
 
 Options:
   -h, --help    Show help             

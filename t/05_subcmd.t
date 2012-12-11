@@ -3,6 +3,9 @@ use Test::More;
 
 use Smart::Options;
 
+use File::Spec;
+my $fileName = File::Spec->catfile('t','05_subcmd.t');
+
 subtest 'support subcommand' => sub {
     my $opt = Smart::Options->new();
     $opt->subcmd(add => Smart::Options->new()->demand(qw(x y)));
@@ -23,7 +26,7 @@ subtest 'subcommand usage' => sub {
     $opt->subcmd(minus => Smart::Options->new()->demand(qw(x y)));
     $opt->boolean('u');
     is $opt->help, <<"EOS", 'subcmd help';
-Usage: t/05_subcmd.t [option] COMMAND
+Usage: $fileName [option] COMMAND
 
 Options:
   -h, --help  Show help               
