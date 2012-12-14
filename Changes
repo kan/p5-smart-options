@@ -1,5 +1,9 @@
 Revision history for Perl extension Smart::Options
 
+0.03   Fri Dec  14 20:51:25
+    - fix test on windows (thanks to NGLENN)
+    - support dot notation
+
 0.021  Thu Nov  29 12:32:53
     - fix test_requires and alias bugs (thanks to hayajo)
      - https://github.com/kan/p5-smart-options/pull/1
