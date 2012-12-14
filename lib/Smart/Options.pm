@@ -506,6 +506,11 @@ If set flag multiple times it will get arrayref.
   use Smart::Options;
   argv(qw(-x 1 -x 2 -x 3))->{x}; # => [1, 2, 3]
 
+=head2 dot notation
+
+  use Smart::Optuions;
+  argv(qw(--foo.x 1 --foo.y 2)); # => { foo => { x => 1, y => 2 } }
+
 =head1 AUTHOR
 
 Kan Fushihara E<lt>kan.fushihara@gmail.comE<gt>
