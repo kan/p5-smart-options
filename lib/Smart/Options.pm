@@ -164,9 +164,13 @@ sub showHelp {
 }
 
 sub _set_v2a {
-    my ($argv, $key, $value) = @_;
+    my ($argv, $key, $value, $k) = @_;
 
-    if (exists $argv->{$key}) {
+    if ($k) {
+        $argv->{$key} //= {};
+        _set_v2a($argv->{$key}, $k, $value);
+    }
+    elsif (exists $argv->{$key}) {
         if (ref($argv->{$key})) {
             push @{$argv->{$key}}, $value;
         }
@@ -197,27 +201,40 @@ sub parse {
     my $boolean = $self->{boolean};
 
     my $key;
+    my $nest_key;
     my $stop = 0;
     for my $arg (@_) {
         if ($stop) {
             push @args, $arg;
             next;
         }
-        if ($arg =~ /^--((?:\w|-)+)=(.+)$/) {
-            my $option = $self->_get_real_name($1);
-            _set_v2a($argv, $option, $2);
+        if ($arg =~ /^--((?:\w|-|\.)+)=(.+)$/) {
+            my ($opt, $k) = split(/\./, $1);
+            my $option = $self->_get_real_name($opt);
+            if ($k) {
+                _set_v2a($argv, $option, $2, $k);
+            } else {
+                _set_v2a($argv, $option, $2);
+            }
         }
-        elsif ($arg =~ /^(-(\w(?:\w|-)*)|--((?:\w|-)+))$/) {
+        elsif ($arg =~ /^(-(\w(?:\w|-|\.)*)|--((?:\w|-|\.)+))$/) {
             if ($key) {
                 $argv->{$key} = 1;
             }
             my $opt = $2 // $3;
+            ($opt, my $k) = split(/\./, $opt);
             my $option = $self->_get_real_name($opt);
             if ($boolean->{$option}) {
-                $argv->{$option} = 1;
+                if ($k) {
+                    $argv->{$option} //= {};
+                    $argv->{$option}->{$k} = 1;
+                } else {
+                    $argv->{$option} = 1;
+                }
             }
             else {
                 $key = $option;
+                $nest_key = $k;
             }
         }
         elsif ($arg =~ /^--$/) {
@@ -227,8 +244,13 @@ sub parse {
         }
         else {
             if ($key) {
-                _set_v2a($argv, $key, $arg);
-                $key = undef; # reset
+                if ($nest_key) {
+                    _set_v2a($argv, $key, $arg, $nest_key);
+                } else {
+                    _set_v2a($argv, $key, $arg);
+                }
+                # reset
+                $key = $nest_key = undef;
             }
             else {
                 if (!scalar(@args) && keys %{$self->{subcmd}}) {
@@ -247,7 +269,12 @@ sub parse {
         }
     }
     if ($key) {
-        $argv->{$key} = 1;
+        if ($nest_key) {
+            $argv->{$key} //= {};
+            $argv->{$key}->{$nest_key} = 1;
+        } else {
+            $argv->{$key} = 1;
+        }
     }
 
     if (my $parser = $self->{subcmd}->{$argv->{command}||''}) {

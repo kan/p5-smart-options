@@ -24,4 +24,10 @@ subtest 'duplicates' => sub {
     is_deeply $argv->{x}, [5, 8, 0];
 };
 
+subtest 'dot notation' => sub {
+    my $argv = argv(qw(--foo.x=5 --foo.y 8));
+
+    is_deeply $argv, { foo => { x => 5, y => 8 }, '_' => [] };
+};
+
 done_testing;
