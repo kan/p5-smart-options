@@ -22,7 +22,9 @@ sub new {
         demand   => {},
         usage    => "Usage: $0",
         describe => {},
+        type     => {},
         subcmd   => {},
+        coerce   => {},
     }, $pkg;
 
     if ($opt{add_help} // 1) {
@@ -55,6 +57,7 @@ sub _set {
 sub alias { shift->_set('alias', @_) }
 sub default { shift->_set('default', @_) }
 sub describe { shift->_set('describe', @_) }
+sub type { shift->_set('type', @_) }
 sub subcmd { shift->_set('subcmd', @_) }
 
 sub _set_flag {
@@ -82,6 +85,15 @@ sub options {
     }
 
     $self;
+}
+
+sub coerce {
+    my ($self, $isa, $type, $generater) = @_;
+
+    $self->{coerce}->{$isa} = {
+        type => $type,
+        generater => $generater,
+    };
 }
 
 sub usage { $_[0]->{usage} = $_[1]; $_[0] }
@@ -299,6 +311,56 @@ sub parse {
             $self->showHelp;
             print STDERR "\nMissing required arguments: $opt\n";
             die;
+        }
+    }
+
+    for my $key (keys %{$self->{type}}) {
+        my $opt = $self->_get_real_name($key);
+        my $type = $self->{type}->{$key};
+        if (my $c = $self->{coerce}->{$type}) {
+            $type = $c->{type};
+            $argv->{$opt} = $c->{generater}->($argv->{$opt});
+        }
+        my $check = 0;
+        given ($type) {
+            when ('Bool') {
+                $argv->{$opt} //= 0;
+                $check = ($argv->{$opt} =~ /^(0|1)$/) ? 1 : 0;
+            }
+            when ('Str') {
+                $check = 1;
+            }
+            when ('Int') {
+                if ($argv->{$opt}) {
+                    $check = ($argv->{$opt} =~ /^\-?\d+$/) ? 1 : 0;
+                } else {
+                    $check = 1;
+                }
+            }
+            when ('Num') {
+                if ($argv->{$opt}) {
+                    $check = ($argv->{$opt} =~ /^\-?\d+(\.\d+)$/) ? 1 : 0;
+                } else {
+                    $check = 1;
+                }
+            }
+            when ('ArrayRef') {
+                $argv->{$opt} //= [];
+                unless (ref($argv->{$opt})) {
+                    $argv->{$opt} = [$argv->{$opt}];
+                }
+                $check = (ref($argv->{$opt}) eq 'ARRAY') ? 1 : 0;
+            }
+            when ('HashRef') {
+                $argv->{$opt} //= {};
+                $check = (ref($argv->{$opt}) eq 'HASH') ? 1 : 0;
+            }
+            default {
+                die "cannot find type constraint '$type'\n";
+            }
+        }
+        unless ($check) {
+            die "Value '@{[$argv->{$opt}]}' invalid for option $opt($type)\n";
         }
     }
 

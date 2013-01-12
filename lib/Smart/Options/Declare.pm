@@ -6,8 +6,21 @@ use Exporter 'import';
 use Smart::Options;
 use PadWalker qw/var_name/;
 
-our @EXPORT = qw(opts);
+our @EXPORT = qw(opts opts_coerce);
 
+our $COERCE = {
+    Multiple => {
+        type      => 'ArrayRef',
+        generater => sub {
+            [
+                split(
+                    qr{,},
+                    ref( $_[0] ) eq 'ARRAY' ? join( q{,}, @{ $_[0] } ) : $_[0]
+                )
+            ];
+          }
+    }
+};
 my %is_invocant = map{ $_ => undef } qw($self $class);
 
 sub opts {
@@ -56,6 +69,19 @@ sub opts {
                 if ($rule->{comment}) {
                     $opt->describe($name => $rule->{comment});
                 }
+
+                if (my $isa = $rule->{isa}) {
+                    if ($isa eq 'Bool') {
+                        $opt->boolean($name);
+                    }
+                    $opt->type($name => $isa);
+                }
+            }
+            else {
+                if ($rule eq 'Bool') {
+                    $opt->boolean($name);
+                }
+                $opt->type($name => $rule);
             }
         }
 
@@ -65,6 +91,10 @@ sub opts {
         }
 
         $i++ if defined $_[$i+1]; # discard type info
+    }
+
+    while (my ($isa, $c) = each(%$COERCE)) {
+        $opt->coerce($isa => $c->{type}, $c->{generater});
     }
 
     my $argv = $opt->parse;
@@ -77,6 +107,12 @@ sub opts {
         $_[$i] = $argv->{$name};
         $i++ if defined $_[$i+1]; # discard type info
     }
+}
+
+sub opts_coerce {
+    my ($isa, $type, $generater) = @_;
+
+    $COERCE->{$isa} = { type => $type, generater => $generater };
 }
 
 1;

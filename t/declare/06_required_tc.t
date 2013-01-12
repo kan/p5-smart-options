@@ -20,33 +20,29 @@ use Test::Exception;
 
 my $foo = Foo->new;
 
-TODO: {
-    todo_skip "type check not implement yet", 7;
+lives_and{
+    @ARGV = qw(--x --y=20);
+    my($x, $y) = $foo->bar;
 
-    lives_and{
-        @ARGV = qw(--x --y=20);
-        my($x, $y) = $foo->bar;
+    is $x, 1;
+    is $y, 20;
 
-        is $x, 1;
-        is $y, 20;
+    @ARGV = qw(--y=20 --x);
+    ($x, $y) = $foo->bar;
 
-        @ARGV = qw(--y=20 --x);
-        ($x, $y) = $foo->bar;
+    is $x, 1;
+    is $y, 20;
 
-        is $x, 1;
-        is $y, 20;
+    @ARGV = qw(--y=10);
+    ($x, $y) = $foo->bar;
 
-        @ARGV = qw(--y=10);
-        ($x, $y) = $foo->bar;
+    ok !$x; # x is undefined
+    is $y, 10;
+};
 
-        ok !$x; # x is undefined
-        is $y, 10;
-    };
-
-    throws_ok{
-        @ARGV = qw(--x --y=3.14);
-        $foo->bar;
-    } qr/Value "3.14" invalid for option y \(number expected\)/;
-}
+throws_ok{
+    @ARGV = qw(--x --y=3.14);
+    $foo->bar;
+} qr/Value '3\.14' invalid for option y\(Int\)/;
 
 done_testing;

@@ -1,16 +1,20 @@
 Revision history for Perl extension Smart::Options
 
-0.03   Fri Dec  14 20:51:25
+0.04   Sat Jan  12 19:30:30 JST 2013
+    - support type check and coerce
+
+0.03   Fri Dec  14 20:51:25 JST 2012
     - fix test on windows (thanks to NGLENN)
     - support dot notation
 
-0.021  Thu Nov  29 12:32:53
+0.021  Thu Nov  29 12:32:53 JST 2012
     - fix test_requires and alias bugs (thanks to hayajo)
      - https://github.com/kan/p5-smart-options/pull/1
 
-0.02   Tue Nov  13 21:16:21
+0.02   Tue Nov  13 21:16:21 JST 2012
     - support subcommand like GetOpt::Compat::WithCmd
     - support DSL like opts (Smart::Options::Declare)
 
-0.01   Sun Oct  07 13:23:11 
+0.01   Sun Oct  07 13:23:11 JST 2012
     - original version
+
