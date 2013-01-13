@@ -2,7 +2,7 @@ package Smart::Options;
 use strict;
 use warnings;
 use 5.010001;
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 require Exporter;
 our @ISA = qw(Exporter);
@@ -505,6 +505,38 @@ is the same as
   my $opt = Smart::Options->new()
               ->alias(f => 'file')
               ->default(f => '/etc/passwd');
+
+=head2 type
+
+set type check for option value
+
+  use Smart::Options;
+  my $opt = Smart::Options->new()->type(foo => 'Int');
+
+  $opt->parse('--foo=bar') # => fail
+  $opt->parse('--foo=3.14') # => fail
+  $opt->parse('--foo=1') # => ok
+
+support type is here.
+
+  Bool
+  Str
+  Int
+  Num
+  ArrayRef
+  HashRef
+
+=head2 coerce
+
+define new type and convert logic.
+
+  use Smart::Options;
+  use Path::Class; # export 'file'
+  my $opt = Smart::Options->new()->coerce(File => 'Str', sub { file($_[0]) })
+                                 ->type(file => 'File');
+  
+  $opt->parse('--foo=/etc/passwd');
+  $argv->{file} # => Path::Class::File instance
 
 =head2 usage
 

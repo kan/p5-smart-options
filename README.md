@@ -132,6 +132,39 @@ is the same as
                 ->alias(f => 'file')
                 ->default(f => '/etc/passwd');
 
+## type
+
+set type check for option value
+
+    use Smart::Options;
+    my $opt = Smart::Options->new()->type(foo => 'Int');
+
+    $opt->parse('--foo=bar') # => fail
+    $opt->parse('--foo=3.14') # => fail
+    $opt->parse('--foo=1') # => ok
+
+support type is here.
+
+    Bool
+    Str
+    Int
+    Num
+    ArrayRef
+    HashRef
+
+## coerce
+
+define new type and convert logic.
+
+    use Smart::Options;
+    use Path::Class; # export 'file'
+    my $opt = Smart::Options->new()->coerce(File => 'Str', sub { file($_[0]) })
+                                   ->type(file => 'File');
+    
+
+    $opt->parse('--foo=/etc/passwd');
+    $argv->{file} # => Path::Class::File instance
+
 ## usage
 
 set a usage message to show which command to use. default is "Usage: $0".

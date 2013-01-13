@@ -61,3 +61,12 @@ mmm
 argv
 STDERR
 DSL
+Multiple
+NewType
+Num
+Int
+Bool
+Str
+Generater
+isa
+param's
