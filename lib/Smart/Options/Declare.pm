@@ -201,8 +201,6 @@ this comment is used to generate help. help can show --help
 
 =head2 Multiple
 
-=head1 AUTHOR
-
 This subtype is based off of ArrayRef. It will attempt to split any values passed on the command line on a comma: that is,
 
   opts my $foo => 'ArrayRef';
@@ -214,6 +212,8 @@ will become
   opts my $foo => 'Multiple';
   # script.pl --foo=one --foo=two,three
   # => ['one', 'two', 'three']
+
+=head1 AUTHOR
 
 Kan Fushihara E<lt>kan.fushihara@gmail.comE<gt>
 

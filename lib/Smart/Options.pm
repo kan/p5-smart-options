@@ -506,7 +506,7 @@ is the same as
               ->alias(f => 'file')
               ->default(f => '/etc/passwd');
 
-=head2 type
+=head2 type($option => $type)
 
 set type check for option value
 
@@ -526,7 +526,7 @@ support type is here.
   ArrayRef
   HashRef
 
-=head2 coerce
+=head2 coerce( $newtype => $sourcetype, $generator )
 
 define new type and convert logic.
 

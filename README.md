@@ -132,7 +132,7 @@ is the same as
                 ->alias(f => 'file')
                 ->default(f => '/etc/passwd');
 
-## type
+## type($option => $type)
 
 set type check for option value
 
@@ -152,7 +152,7 @@ support type is here.
     ArrayRef
     HashRef
 
-## coerce
+## coerce( $newtype => $sourcetype, $generator )
 
 define new type and convert logic.
 
