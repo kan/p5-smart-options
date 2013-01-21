@@ -2,7 +2,7 @@ package Smart::Options;
 use strict;
 use warnings;
 use 5.010001;
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 require Exporter;
 our @ISA = qw(Exporter);
@@ -10,6 +10,7 @@ our @EXPORT = qw(argv);
 
 use List::MoreUtils qw(uniq);
 use Text::Table;
+use File::Slurp;
 
 sub new {
     my $pkg = shift;
@@ -204,6 +205,21 @@ sub _get_real_name {
     return $opt;
 }
 
+sub _load_config {
+    my ($self, $argv, $file) = @_;
+
+    for my $line (read_file($file)) {
+        next if $line =~ /^\[/; # section
+        next if $line =~ /^;/;  # comment
+        next if $line !~ /=/;   # bad format;
+
+        chomp($line);
+        if ($line =~ /^(.+?[^\\])=(.*)$/) {
+            $argv->{$1} = $2;
+        }
+    }
+}
+
 sub parse {
     my $self = shift;
     push @_, @ARGV unless @_;
@@ -295,6 +311,12 @@ sub parse {
         $argv->{_} = \@args;
     }
 
+    while (my ($key, $val) = each %{$self->{type}}) {
+        next if $val ne 'Config';
+        next if !($argv->{$key}) || !(-f $argv->{$key});
+        $self->_load_config($argv, delete $argv->{$key});
+    }
+
     while (my ($key, $val) = each %{$self->{default}}) {
         my $opt = $self->_get_real_name($key);
         if (ref($val) && ref($val) eq 'CODE') {
@@ -354,6 +376,12 @@ sub parse {
             when ('HashRef') {
                 $argv->{$opt} //= {};
                 $check = (ref($argv->{$opt}) eq 'HASH') ? 1 : 0;
+            }
+            when ('Config') {
+                if ($argv->{$opt} && !(-f $argv->{$opt})) {
+                    die "cannot load config file '@{[$argv->{$opt}]}\n";
+                }
+                $check = 1;
             }
             default {
                 die "cannot find type constraint '$type'\n";
@@ -525,6 +553,23 @@ support type is here.
   Num
   ArrayRef
   HashRef
+  Config
+
+=head3 Config
+
+'Config' is special type.
+The contents will be read into each option if a file name is specified as a Config type option. 
+
+  use Smart::Options;
+  my $opt = Smart::Options->new()->type(conf => 'Config');
+  $opt->parse(qw(--conf=.optrc));
+
+config file format is simple. see http://en.wikipedia.org/wiki/INI_file
+
+  ; this is comment
+  [section]
+  key=value
+  key2=value2
 
 =head2 coerce( $newtype => $sourcetype, $generator )
 

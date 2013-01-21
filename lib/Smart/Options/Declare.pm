@@ -35,6 +35,7 @@ sub opts {
     }
 
     my $opt = Smart::Options->new();
+    $opt->type(config => 'Config');
 
     for ( my $i = 0 ; $i < @_ ; $i++ ) {
         ( my $name = var_name( 1, \$_[$i] ) )
