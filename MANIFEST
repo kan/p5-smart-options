@@ -17,6 +17,7 @@ t/04_argv.t
 t/05_subcmd.t
 t/06_type.t
 t/07_coerce.t
+t/08_config.t
 t/declare/01_basic.t
 t/declare/02_type.t
 t/declare/03_required.t
