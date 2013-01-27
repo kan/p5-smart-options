@@ -1,5 +1,8 @@
 Revision history for Perl extension Smart::Options
 
+0.05   Sun Jan  27 18:14:08 JST 2013
+    - support load option from file
+
 0.04   Sat Jan  12 19:30:30 JST 2013
     - support type check and coerce
 
