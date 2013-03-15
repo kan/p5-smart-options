@@ -1,27 +1,15 @@
 use strict;
 use warnings;
-use Module::Build;
+use Module::Build::Pluggable (
+    'CPANfile'
+);
 
-my $build = Module::Build->new(
+my $build = Module::Build::Pluggable->new(
     license               => 'perl',
     dynamic_config        => 0,
                           
-    build_requires        => {
-        'Test::More' => '0.98',
-        'Test::Requires'  => 0,
-        'Capture::Tiny'   => '0.12',
-        'Try::Tiny'       => 0,
-        'Test::Exception' => 0,
-        'File::Spec'      => 0,
-        'File::Slurp'     => 0,
-    },
-    configure_requires   => { 'Module::Build' => '0.38' },
     requires             => {
         perl => '5.010001',
-        'Exporter'        => 0,
-        'Text::Table'     => 0,
-        'List::MoreUtils' => 0,
-        'PadWalker'       => 0,
     },
 
     no_index    => { 'directory' => [ 'inc' ] },

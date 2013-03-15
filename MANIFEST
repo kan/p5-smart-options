@@ -1,6 +1,7 @@
 .travis.yml
 Build.PL
 Changes
+cpanfile
 lib/Smart/Options.pm
 lib/Smart/Options/Declare.pm
 LICENSE
