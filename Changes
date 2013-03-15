@@ -1,5 +1,8 @@
 Revision history for Perl extension Smart::Options
 
+0.051  Fri Mar  15 15:53:04 JST 2013
+    - fixed require module info (thx hirobanex)
+
 0.05   Sun Jan  27 18:14:08 JST 2013
     - support load option from file
 
