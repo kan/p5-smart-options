@@ -16,3 +16,6 @@ MYMETA.*
 META.json
 META.yml
 README
+.coveralls.yml
+cover_db
+coverage
