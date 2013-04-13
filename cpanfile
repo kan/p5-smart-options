@@ -23,4 +23,5 @@ on 'test' => sub {
     requires 'Test::Exception';
     requires 'File::Spec';
     requires 'File::Slurp';
+    requires 'Devel::Cover';
 };
