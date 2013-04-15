@@ -5,7 +5,7 @@ perl:
   - "5.10"
 before_install:
   - cpanm git://github.com/kan/coveralls-perl.git
-script: perl Build.PL && ./Build build && ./Build testcover
+script: perl Build.PL && ./Build build && cover -test
 after_success:
-  - "cover -report coveralls"
+  - cover -report coveralls
 
