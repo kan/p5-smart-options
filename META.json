@@ -1,0 +1,86 @@
+{
+   "abstract" : "smart command line options processor",
+   "author" : [
+      "Kan Fushihara <kan.fushihara@gmail.com>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Minilla/v0.0.53, CPAN::Meta::Converter version 2.130880",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Smart::Options",
+   "no_index" : {
+      "directory" : [
+         "t",
+         "xt",
+         "inc",
+         "share",
+         "eg",
+         "examples",
+         "author"
+      ]
+   },
+   "prereqs" : {
+      "configure" : {
+         "requires" : {
+            "CPAN::Meta" : "0",
+            "CPAN::Meta::Prereqs" : "0",
+            "Module::Build" : "0.38",
+            "Module::Build::Pluggable" : "0",
+            "Module::Build::Pluggable::CPANfile" : "0"
+         }
+      },
+      "develop" : {
+         "requires" : {
+            "Pod::Wordlist::hanekomu" : "0",
+            "Test::CPAN::Meta" : "0",
+            "Test::MinimumVersion" : "0.10108",
+            "Test::Pod" : "1.41",
+            "Test::Spelling" : "0"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "Exporter" : "0",
+            "List::MoreUtils" : "0",
+            "PadWalker" : "0",
+            "Text::Table" : "0",
+            "perl" : "5.010001"
+         }
+      },
+      "test" : {
+         "requires" : {
+            "Capture::Tiny" : "0.12",
+            "Devel::Cover" : "0",
+            "File::Slurp" : "0",
+            "File::Spec" : "0",
+            "Test::Exception" : "0",
+            "Test::More" : "0.98",
+            "Test::Requires" : "0",
+            "Test::TCP" : "0",
+            "Try::Tiny" : "0"
+         }
+      }
+   },
+   "release_status" : "unstable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/kan/p5-smart-options/issues"
+      },
+      "homepage" : "https://github.com/kan/p5-smart-options",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/kan/p5-smart-options.git",
+         "web" : "https://github.com/kan/p5-smart-options"
+      }
+   },
+   "version" : "0.051",
+   "x_contributors" : [
+      "hayajo <hayajo@cpan.org>",
+      "Hiroyuki Akabane <hirobanex@gmail.com>"
+   ]
+}

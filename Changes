@@ -1,5 +1,7 @@
 Revision history for Perl extension Smart::Options
 
+{{$NEXT}}
+
 0.051  Fri Mar  15 15:53:04 JST 2013
     - fixed require module info (thx hirobanex)
 

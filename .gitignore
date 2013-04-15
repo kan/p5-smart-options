@@ -13,9 +13,15 @@ pm_to_blib
 blib/
 META.yml
 MYMETA.*
-META.json
 META.yml
 README
 .coveralls.yml
 cover_db
 coverage
+/smart-options-*
+/.build
+/_build_params
+/Build
+!Build/
+!META.json
+/Smart::Options-*

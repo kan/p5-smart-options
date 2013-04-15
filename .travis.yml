@@ -6,7 +6,7 @@ perl:
 before_install:
   - perlbrew install-cpanm -f
 install:
-  - cpanm git://github.com/kan/coveralls-perl.git || { cat ~/.cpanm/build.log ; false ; }
+  - cpanm git://github.com/kan/coveralls-perl.git
 script: "perl Build.PL; ./Build installdeps; ./Build testcover; ./Build test"
 after_success:
   - "cover -report coveralls"

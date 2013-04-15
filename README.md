@@ -2,8 +2,6 @@
 
 Smart::Options - smart command line options processor
 
-[![build status](https://secure.travis-ci.org/kan/p5-smart-options.png)](http://travis-ci.org/kan/p5-smart-options)
-
 # SYNOPSIS
 
     use Smart::Options;
