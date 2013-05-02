@@ -24,4 +24,4 @@ coverage
 /Build
 !Build/
 !META.json
-/Smart::Options-*
+/Smart-Options-*
