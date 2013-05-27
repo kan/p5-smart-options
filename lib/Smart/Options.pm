@@ -344,51 +344,39 @@ sub parse {
             $argv->{$opt} = $c->{generater}->($argv->{$opt});
         }
         my $check = 0;
-        {
-            no warnings 'experimental';
-            given ($type) {
-                when ('Bool') {
-                    $argv->{$opt} //= 0;
-                    $check = ($argv->{$opt} =~ /^(0|1)$/) ? 1 : 0;
-                }
-                when ('Str') {
-                    $check = 1;
-                }
-                when ('Int') {
-                    if ($argv->{$opt}) {
-                        $check = ($argv->{$opt} =~ /^\-?\d+$/) ? 1 : 0;
-                    } else {
-                        $check = 1;
-                    }
-                }
-                when ('Num') {
-                    if ($argv->{$opt}) {
-                        $check = ($argv->{$opt} =~ /^\-?\d+(\.\d+)$/) ? 1 : 0;
-                    } else {
-                        $check = 1;
-                    }
-                }
-                when ('ArrayRef') {
-                    $argv->{$opt} //= [];
-                    unless (ref($argv->{$opt})) {
-                        $argv->{$opt} = [$argv->{$opt}];
-                    }
-                    $check = (ref($argv->{$opt}) eq 'ARRAY') ? 1 : 0;
-                }
-                when ('HashRef') {
-                    $argv->{$opt} //= {};
-                    $check = (ref($argv->{$opt}) eq 'HASH') ? 1 : 0;
-                }
-                when ('Config') {
-                    if ($argv->{$opt} && !(-f $argv->{$opt})) {
-                        die "cannot load config file '@{[$argv->{$opt}]}\n";
-                    }
-                    $check = 1;
-                }
-                default {
-                    die "cannot find type constraint '$type'\n";
-                }
+        if ($type eq 'Bool') {
+            $argv->{$opt} //= 0;
+            $check = ($argv->{$opt} =~ /^(0|1)$/) ? 1 : 0;
+        } elsif ($type eq 'Str') {
+            $check = 1;
+        } elsif ($type eq 'Int') {
+            if ($argv->{$opt}) {
+                $check = ($argv->{$opt} =~ /^\-?\d+$/) ? 1 : 0;
+            } else {
+                $check = 1;
             }
+        } elsif ($type eq 'Num') {
+            if ($argv->{$opt}) {
+                $check = ($argv->{$opt} =~ /^\-?\d+(\.\d+)$/) ? 1 : 0;
+            } else {
+                $check = 1;
+            }
+        } elsif ($type eq 'ArrayRef') {
+            $argv->{$opt} //= [];
+            unless (ref($argv->{$opt})) {
+                $argv->{$opt} = [$argv->{$opt}];
+            }
+            $check = (ref($argv->{$opt}) eq 'ARRAY') ? 1 : 0;
+        } elsif ($type eq 'HashRef') {
+            $argv->{$opt} //= {};
+            $check = (ref($argv->{$opt}) eq 'HASH') ? 1 : 0;
+        } elsif ('Config') {
+            if ($argv->{$opt} && !(-f $argv->{$opt})) {
+                die "cannot load config file '@{[$argv->{$opt}]}\n";
+            }
+            $check = 1;
+        } else {
+            die "cannot find type constraint '$type'\n";
         }
         unless ($check) {
             die "Value '@{[$argv->{$opt}]}' invalid for option $opt($type)\n";
