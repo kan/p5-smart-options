@@ -4,6 +4,7 @@
         'Test::Requires'  => 0,
     },
 requires 'Exporter';
+requires 'File::Slurp';
 requires 'Text::Table';
 requires 'List::MoreUtils';
 requires 'PadWalker';
@@ -22,6 +23,5 @@ on 'test' => sub {
     requires 'Try::Tiny';
     requires 'Test::Exception';
     requires 'File::Spec';
-    requires 'File::Slurp';
     requires 'Devel::Cover';
 };
