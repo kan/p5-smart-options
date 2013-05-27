@@ -4,7 +4,7 @@
       "Kan Fushihara <kan.fushihara@gmail.com>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Minilla/v0.3.0, CPAN::Meta::Converter version 2.130880",
+   "generated_by" : "Minilla/v0.4.3, CPAN::Meta::Converter version 2.120921",
    "license" : [
       "perl_5"
    ],
@@ -45,6 +45,7 @@
       "runtime" : {
          "requires" : {
             "Exporter" : "0",
+            "File::Slurp" : "0",
             "List::MoreUtils" : "0",
             "PadWalker" : "0",
             "Text::Table" : "0",
@@ -55,7 +56,6 @@
          "requires" : {
             "Capture::Tiny" : "0.12",
             "Devel::Cover" : "0",
-            "File::Slurp" : "0",
             "File::Spec" : "0",
             "Test::Exception" : "0",
             "Test::More" : "0.98",
@@ -77,9 +77,10 @@
          "web" : "https://github.com/kan/p5-smart-options"
       }
    },
-   "version" : "0.051",
+   "version" : "0.052",
    "x_contributors" : [
       "hayajo <hayajo@cpan.org>",
-      "Hiroyuki Akabane <hirobanex@gmail.com>"
+      "Hiroyuki Akabane <hirobanex@gmail.com>",
+      "Takuji Nishibayashi <takuji31@gmail.com>"
    ]
 }

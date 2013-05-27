@@ -2,7 +2,7 @@ package Smart::Options;
 use strict;
 use warnings;
 use 5.010001;
-our $VERSION = '0.051';
+our $VERSION = '0.052';
 
 require Exporter;
 our @ISA = qw(Exporter);
@@ -344,47 +344,50 @@ sub parse {
             $argv->{$opt} = $c->{generater}->($argv->{$opt});
         }
         my $check = 0;
-        given ($type) {
-            when ('Bool') {
-                $argv->{$opt} //= 0;
-                $check = ($argv->{$opt} =~ /^(0|1)$/) ? 1 : 0;
-            }
-            when ('Str') {
-                $check = 1;
-            }
-            when ('Int') {
-                if ($argv->{$opt}) {
-                    $check = ($argv->{$opt} =~ /^\-?\d+$/) ? 1 : 0;
-                } else {
+        {
+            no warnings 'experimental';
+            given ($type) {
+                when ('Bool') {
+                    $argv->{$opt} //= 0;
+                    $check = ($argv->{$opt} =~ /^(0|1)$/) ? 1 : 0;
+                }
+                when ('Str') {
                     $check = 1;
                 }
-            }
-            when ('Num') {
-                if ($argv->{$opt}) {
-                    $check = ($argv->{$opt} =~ /^\-?\d+(\.\d+)$/) ? 1 : 0;
-                } else {
+                when ('Int') {
+                    if ($argv->{$opt}) {
+                        $check = ($argv->{$opt} =~ /^\-?\d+$/) ? 1 : 0;
+                    } else {
+                        $check = 1;
+                    }
+                }
+                when ('Num') {
+                    if ($argv->{$opt}) {
+                        $check = ($argv->{$opt} =~ /^\-?\d+(\.\d+)$/) ? 1 : 0;
+                    } else {
+                        $check = 1;
+                    }
+                }
+                when ('ArrayRef') {
+                    $argv->{$opt} //= [];
+                    unless (ref($argv->{$opt})) {
+                        $argv->{$opt} = [$argv->{$opt}];
+                    }
+                    $check = (ref($argv->{$opt}) eq 'ARRAY') ? 1 : 0;
+                }
+                when ('HashRef') {
+                    $argv->{$opt} //= {};
+                    $check = (ref($argv->{$opt}) eq 'HASH') ? 1 : 0;
+                }
+                when ('Config') {
+                    if ($argv->{$opt} && !(-f $argv->{$opt})) {
+                        die "cannot load config file '@{[$argv->{$opt}]}\n";
+                    }
                     $check = 1;
                 }
-            }
-            when ('ArrayRef') {
-                $argv->{$opt} //= [];
-                unless (ref($argv->{$opt})) {
-                    $argv->{$opt} = [$argv->{$opt}];
+                default {
+                    die "cannot find type constraint '$type'\n";
                 }
-                $check = (ref($argv->{$opt}) eq 'ARRAY') ? 1 : 0;
-            }
-            when ('HashRef') {
-                $argv->{$opt} //= {};
-                $check = (ref($argv->{$opt}) eq 'HASH') ? 1 : 0;
-            }
-            when ('Config') {
-                if ($argv->{$opt} && !(-f $argv->{$opt})) {
-                    die "cannot load config file '@{[$argv->{$opt}]}\n";
-                }
-                $check = 1;
-            }
-            default {
-                die "cannot find type constraint '$type'\n";
             }
         }
         unless ($check) {
