@@ -2,6 +2,9 @@ Revision history for Perl extension Smart::Options
 
 {{$NEXT}}
 
+0.053 2013-05-27T07:20:04Z
+    - unuse given-when (thx takuji31)
+
 0.052 2013-05-27T02:22:53Z
     - fixed require module info (thx takuji31)
     - stop warnings on perl 5.18.x or later
