@@ -2,6 +2,10 @@ Revision history for Perl extension Smart::Options
 
 {{$NEXT}}
 
+0.052 2013-05-27T02:22:53Z
+    - fixed require module info (thx takuji31)
+    - stop warnings on perl 5.18.x or later
+
 0.051  Fri Mar  15 15:53:04 JST 2013
     - fixed require module info (thx hirobanex)
 
