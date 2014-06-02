@@ -59,7 +59,6 @@ set alias for option. you can use "$option" field of argv.
 
     use Smart::Options;
     
-
     my $argv = Smart::Options->new->alias(f => 'file')->parse(qw(-f /etc/hosts));
     $argv->{file} # => '/etc/hosts'
 
@@ -69,7 +68,6 @@ set default value for option.
 
     use Smart::Options;
     
-
     my $argv = Smart::Options->new->default(y => 5)->parse(qw(-x 10));
     $argv->{x} + $argv->{y} # => 15
 
@@ -93,11 +91,9 @@ interpret 'option' as a boolean.
 
     use Smart::Options;
     
-
     my $argv = Smart::Options->new->parse(qw(-x 11 -y 10));
     $argv->{x} # => 11
     
-
     my $argv2 = Smart::Options->new->boolean('x')->parse(qw(-x 11 -y 10));
     $argv2->{x} # => true (1)
 
@@ -176,7 +172,6 @@ define new type and convert logic.
     my $opt = Smart::Options->new()->coerce(File => 'Str', sub { file($_[0]) })
                                    ->type(file => 'File');
     
-
     $opt->parse('--foo=/etc/passwd');
     $argv->{file} # => Path::Class::File instance
 
@@ -203,7 +198,7 @@ set a sub command. $parser is another Smart::Option object.
 
 # DSL
 
-see also [Smart::Options::Declare](http://search.cpan.org/perldoc?Smart::Options::Declare)
+see also [Smart::Options::Declare](https://metacpan.org/pod/Smart::Options::Declare)
 
 # PARSING TRICKS
 
@@ -255,7 +250,7 @@ Kan Fushihara <kan.fushihara@gmail.com>
 
 https://github.com/substack/node-optimist
 
-[GetOpt::Casual](http://search.cpan.org/perldoc?GetOpt::Casual), [opts](http://search.cpan.org/perldoc?opts), [GetOpt::Compat::WithCmd](http://search.cpan.org/perldoc?GetOpt::Compat::WithCmd)
+[GetOpt::Casual](https://metacpan.org/pod/GetOpt::Casual), [opts](https://metacpan.org/pod/opts), [GetOpt::Compat::WithCmd](https://metacpan.org/pod/GetOpt::Compat::WithCmd)
 
 # LICENSE
 
