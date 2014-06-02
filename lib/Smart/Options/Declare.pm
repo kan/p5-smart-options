@@ -12,13 +12,17 @@ our $COERCE = {
     Multiple => {
         type      => 'ArrayRef',
         generater => sub {
-            [
-                split(
-                    qr{,},
-                    ref( $_[0] ) eq 'ARRAY' ? join( q{,}, @{ $_[0] } ) : $_[0]
-                )
-            ];
-          }
+            if ( defined $_[0] ) {
+                return [
+                    split(
+                        qr{,},
+                        ref( $_[0] ) eq 'ARRAY' ? join( q{,}, @{ $_[0] } ) : $_[0]
+                    )
+                ];
+            } else {
+                return $_[0];
+            }
+        }
     }
 };
 my %is_invocant = map{ $_ => undef } qw($self $class);
