@@ -27,6 +27,15 @@ subtest 'load option from config file' => sub {
     is $argv->{hello}, 'world';
 };
 
+subtest 'load option from config file(use default file name)' => sub {
+    my $opt = Smart::Options->new()->type(conf => 'Config')->default(conf => $file);
+    my $argv = $opt->parse();
+
+    is $argv->{rif}, 55;
+    is $argv->{xup}, 9.52;
+    is $argv->{hello}, 'world';
+};
+
 
 done_testing;
 

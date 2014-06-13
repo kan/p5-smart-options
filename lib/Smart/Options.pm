@@ -2,7 +2,7 @@ package Smart::Options;
 use strict;
 use warnings;
 use 5.010001;
-our $VERSION = '0.054';
+our $VERSION = '0.056';
 
 require Exporter;
 our @ISA = qw(Exporter);
@@ -311,12 +311,6 @@ sub parse {
         $argv->{_} = \@args;
     }
 
-    while (my ($key, $val) = each %{$self->{type}}) {
-        next if $val ne 'Config';
-        next if !($argv->{$key}) || !(-f $argv->{$key});
-        $self->_load_config($argv, delete $argv->{$key});
-    }
-
     while (my ($key, $val) = each %{$self->{default}}) {
         my $opt = $self->_get_real_name($key);
         if (ref($val) && ref($val) eq 'CODE') {
@@ -325,6 +319,12 @@ sub parse {
         else {
             $argv->{$opt} //= $val;
         }
+    }
+
+    while (my ($key, $val) = each %{$self->{type}}) {
+        next if $val ne 'Config';
+        next if !($argv->{$key}) || !(-f $argv->{$key});
+        $self->_load_config($argv, delete $argv->{$key});
     }
 
     for my $key (keys %{$self->{demand}}) {
