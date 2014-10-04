@@ -1,1 +1,2 @@
 name = "Smart-Options"
+badges = ['travis', 'coveralls']
