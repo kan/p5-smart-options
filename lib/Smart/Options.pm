@@ -26,6 +26,8 @@ sub new {
         type     => {},
         subcmd   => {},
         coerce   => {},
+        env      => {},
+        env_prefix => '',
     }, $pkg;
 
     if ($opt{add_help} // 1) {
@@ -74,6 +76,7 @@ sub _set_flag {
 
 sub boolean { shift->_set_flag('boolean', @_) }
 sub demand { shift->_set_flag('demand', @_) }
+sub env { shift->_set_flag('env', @_) }
 
 sub options {
     my $self = shift;
@@ -98,6 +101,7 @@ sub coerce {
 }
 
 sub usage { $_[0]->{usage} = $_[1]; $_[0] }
+sub env_prefix { $_[0]->{env_prefix} = $_[1]; $_[0] }
 
 sub _get_opt_desc {
     my ($self, $option) = @_;
@@ -329,6 +333,13 @@ sub parse {
         $argv->{cmd_option} = $parser->parse(@args);
     } else {
         $argv->{_} = \@args;
+    }
+
+    for my $env (keys %{$self->{env}}) {
+        if (defined($ENV{uc($self->{env_prefix}."_$env")})) {
+            my $option = $self->_get_real_name($env);
+            $argv->{$option} //= $ENV{uc($self->{env_prefix}."_$env")};
+        }
     }
 
     while (my ($key, $val) = each %{$self->{default}}) {
