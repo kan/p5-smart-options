@@ -12,7 +12,7 @@ subtest 'stop parsing' => sub {
 };
 
 subtest 'negate fields' => sub {
-    my $argv = argv(qw(-a --no-b));
+    my $argv = Smart::Options->new->default(b => 1)->parse(qw(-a --no-b));
 
     ok $argv->{a};
     ok !$argv->{b};

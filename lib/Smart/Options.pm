@@ -250,6 +250,11 @@ sub parse {
                 $argv->{$key} = 1;
             }
             my $opt = $2 // $3;
+            if ($opt =~ /^no\-(.+)$/) {
+                my $option = $self->_get_real_name($1);
+                $argv->{$option} = 0;
+                next;
+            }
             ($opt, my $k) = split(/\./, $opt);
             my $option = $self->_get_real_name($opt);
             if ($boolean->{$option}) {
