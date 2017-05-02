@@ -2,7 +2,7 @@ package Smart::Options;
 use strict;
 use warnings;
 use 5.010001;
-our $VERSION = '0.056';
+our $VERSION = '0.06';
 
 require Exporter;
 our @ISA = qw(Exporter);
