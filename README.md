@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/kan/p5-smart-options.png?branch=master)](https://travis-ci.org/kan/p5-smart-options) [![Coverage Status](https://coveralls.io/repos/kan/p5-smart-options/badge.png?branch=master)](https://coveralls.io/r/kan/p5-smart-options?branch=master)
+[![Build Status](https://travis-ci.org/kan/p5-smart-options.svg?branch=master)](https://travis-ci.org/kan/p5-smart-options) [![Coverage Status](https://img.shields.io/coveralls/kan/p5-smart-options/master.svg?style=flat)](https://coveralls.io/r/kan/p5-smart-options?branch=master)
 # NAME
 
 Smart::Options - smart command line options processor

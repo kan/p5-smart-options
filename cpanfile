@@ -1,19 +1,8 @@
-
-    build_requires        => {
-        'Test::More' => '0.98',
-        'Test::Requires'  => 0,
-    },
 requires 'Exporter';
 requires 'File::Slurp';
 requires 'Text::Table';
 requires 'List::MoreUtils';
 requires 'PadWalker';
-
-on 'configure' => sub {
-    requires 'Module::Build' => '0.38';
-    requires 'Module::Build::Pluggable';
-    requires 'Module::Build::Pluggable::CPANfile';
-};
 
 on 'test' => sub {
     requires 'Test::More' => '0.98';
@@ -24,4 +13,9 @@ on 'test' => sub {
     requires 'Test::Exception';
     requires 'File::Spec';
     requires 'Devel::Cover';
+};
+
+on 'develop' => sub {
+    requires 'Minilla';
+    requires 'Pod::Markdown::Github';
 };
