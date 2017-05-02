@@ -16,7 +16,7 @@ dependencies:
         curl -L https://cpanmin.us/ | ~/perl-5.24/bin/perl - App::cpanminus
         ~/perl-5.24/bin/cpanm Carton
       fi
-    - cpanm --installdeps .
+    - cpanm --with-develop --installdeps --notest .
 
 test:
   override:
