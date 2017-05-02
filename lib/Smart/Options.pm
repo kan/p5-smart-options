@@ -245,7 +245,7 @@ sub parse {
                 _set_v2a($argv, $option, $2);
             }
         }
-        elsif ($arg =~ /^(-(\w(?:\w|-|\.)*)|--((?:\w|-|\.)+))$/) {
+        elsif ($arg =~ /^(-(\w)|--((?:\w|-|\.)+))$/) {
             if ($key) {
                 $argv->{$key} = 1;
             }
@@ -263,6 +263,21 @@ sub parse {
             else {
                 $key = $option;
                 $nest_key = $k;
+            }
+        }
+        elsif ($arg =~ /^-(\w(?:\w|-|\.)+)$/) {
+            if ($key) {
+                $argv->{$key} = 1;
+            }
+            my $opt_str = $1;
+            if ($opt_str =~ /^(.)([0-9])+$/) {
+                my $option = $self->_get_real_name($1);
+                $argv->{$option} = $2;
+            } else {
+                for (split //, $opt_str) {
+                    my $option = $self->_get_real_name($_);
+                    $argv->{$option} = 1;
+                }
             }
         }
         elsif ($arg =~ /^--$/) {

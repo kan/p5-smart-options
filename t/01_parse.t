@@ -17,6 +17,15 @@ subtest 'short option' => sub {
     is $argv->{y}, 21;
 };
 
+subtest 'short multi option' => sub {
+    my $argv = argv(qw(-abc -n5));
+
+    ok $argv->{a};
+    ok $argv->{b};
+    ok $argv->{c};
+    is $argv->{n}, 5;
+};
+
 subtest 'boolean option' => sub {
     my $argv = argv(qw(-s --fr));
 
