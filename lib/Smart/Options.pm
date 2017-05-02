@@ -647,7 +647,7 @@ Kan Fushihara E<lt>kan.fushihara@gmail.comE<gt>
 
 =head1 SEE ALSO
 
-https://github.com/substack/node-optimist
+https://www.npmjs.com/package/minimist
 
 L<GetOpt::Casual>, L<opts>, L<GetOpt::Compat::WithCmd>
 
