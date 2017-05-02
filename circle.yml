@@ -1,0 +1,24 @@
+machine:
+  environment:
+    PATH: ~/perl-5.24/bin:$PATH
+  timezone:
+    Asia/Tokyo
+
+dependencies:
+  cache_directories:
+    - ~/perl-5.24
+    - local
+  pre:
+    - |
+      mkdir -p ~/perl-5.24
+      if [ -z "$(ls -A ~/perl-5.24/)" ]; then
+        curl https://raw.githubusercontent.com/tokuhirom/Perl-Build/master/perl-build | perl - 5.24.0 ~/perl-5.24/
+        curl -L https://cpanmin.us/ | ~/perl-5.24/bin/perl - App::cpanminus
+        ~/perl-5.24/bin/cpanm Carton
+      fi
+    - cpanm --installdeps .
+
+test:
+  override:
+    - minil build
+    - minil test
