@@ -2,6 +2,12 @@ Revision history for Perl extension Smart::Options
 
 {{$NEXT}}
 
+0.06 2017-05-02T12:49:20Z
+    - support environment
+    - support negate fields
+    - support short option multi set
+    - fix document
+
 0.056 2014-06-13T08:29:18Z
     - fixed corece type can use default value (thx scott)
 
