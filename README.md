@@ -249,7 +249,7 @@ Kan Fushihara <kan.fushihara@gmail.com>
 
 # SEE ALSO
 
-https://github.com/substack/node-optimist
+https://www.npmjs.com/package/minimist
 
 [GetOpt::Casual](https://metacpan.org/pod/GetOpt::Casual), [opts](https://metacpan.org/pod/opts), [GetOpt::Compat::WithCmd](https://metacpan.org/pod/GetOpt::Compat::WithCmd)
 
