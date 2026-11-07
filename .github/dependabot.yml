@@ -1,0 +1,14 @@
+version: 2
+updates:
+  # Updates the base image of the Dockerfile (the build and test environment). Dependabot has no
+  # ecosystem for cpanfile, so the Perl dependencies are not covered here.
+  # Add github-actions here when .github/workflows is added (kan/p5-smart-options#9).
+  #
+  # cooldown: only take a version 3 days after it is published. A broken or hijacked release is
+  # usually pulled within a few days. Security updates are not delayed by it.
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 3
