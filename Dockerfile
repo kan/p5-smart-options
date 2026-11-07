@@ -1,4 +1,4 @@
-FROM perl:5.24.0
+FROM perl:5.43.9
 
 WORKDIR /app
 COPY cpanfile /app
