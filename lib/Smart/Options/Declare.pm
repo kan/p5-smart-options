@@ -2,6 +2,7 @@ package Smart::Options::Declare;
 use strict;
 use warnings;
 
+use Carp ();
 use Exporter 'import';
 use Smart::Options;
 use PadWalker qw/var_name/;
