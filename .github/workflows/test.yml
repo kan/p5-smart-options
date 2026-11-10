@@ -55,16 +55,18 @@ jobs:
       - name: run tests
         run: prove -lr t
 
-  # The tarball that publish.yml uploads, made the same way ("Build the tarball" there; change both
-  # together), so that what goes into the distribution is checked before a release: scripts/ must
-  # stay out (minil.toml). The one difference is where Perl 5.44 comes from: publish.yml gets it
-  # from actions-setup-perl (see there).
+  # The tarball that publish.yml uploads, made with the same `minil dist --no-test` as the "Build the
+  # tarball" step of the shared workflow it calls (scripts/tagpr/.github/workflows/publish-cpan.yml),
+  # so that what goes into the distribution is checked before a release. This check is stricter:
+  # it refuses anything under scripts/ (minil.toml keeps all of it out), where the shared workflow
+  # refuses only scripts/tagpr/. Perl 5.44 comes from the perl:5.44 image here and from
+  # actions-setup-perl there.
   dist:
     runs-on: ubuntu-latest
     container:
       image: perl:5.44
     steps:
-      # The whole history, as in publish.yml: Minilla makes x_contributors from `git log`.
+      # The whole history, as in the shared workflow: Minilla makes x_contributors from `git log`.
       - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
