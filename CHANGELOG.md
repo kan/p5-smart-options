@@ -7,6 +7,8 @@ Versions up to 0.061 were released from `Changes`, before this file existed.
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-11-10
+
 - `Num` accepts integers (`3`, `-1`); it took only numbers with a decimal point
 - An unknown type in `type` now dies with `cannot find type constraint '...'`; it was taken as `Config`
 
@@ -78,6 +80,7 @@ Versions up to 0.061 were released from `Changes`, before this file existed.
 
 - Initial release
 
+[1.0.1]: https://github.com/kan/p5-smart-options/releases/tag/v1.0.1
 [1.0.0]: https://github.com/kan/p5-smart-options/releases/tag/v1.0.0
 [0.061]: https://metacpan.org/release/MIKIHOSHI/Smart-Options-0.061
 [0.06]: https://metacpan.org/release/MIKIHOSHI/Smart-Options-0.06
