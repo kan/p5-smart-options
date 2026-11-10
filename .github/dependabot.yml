@@ -12,3 +12,8 @@ updates:
       interval: weekly
     cooldown:
       default-days: 3
+    # Perl versions with an odd minor number are development releases. Skip them and only take
+    # stable releases (even minor). Extend the list when a new development series starts.
+    ignore:
+      - dependency-name: perl
+        versions: ["5.45.x", "5.47.x", "5.49.x"]
