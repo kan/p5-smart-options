@@ -7,6 +7,9 @@ Versions up to 0.061 were released from `Changes`, before this file existed.
 
 ## [Unreleased]
 
+- `Num` accepts integers (`3`, `-1`); it took only numbers with a decimal point
+- An unknown type in `type` now dies with `cannot find type constraint '...'`; it was taken as `Config`
+
 ## [1.0.0] - 2026-11-10
 
 - Version numbers have three parts from 1.0.0 on (`1.0.1`, `1.1.0`), and the change log moves from `Changes` to `CHANGELOG.md`

@@ -394,7 +394,7 @@ sub parse {
             }
         } elsif ($type eq 'Num') {
             if ($argv->{$opt}) {
-                $check = ($argv->{$opt} =~ /^\-?\d+(\.\d+)$/) ? 1 : 0;
+                $check = ($argv->{$opt} =~ /^\-?\d+(\.\d+)?$/) ? 1 : 0;
             } else {
                 $check = 1;
             }
@@ -407,7 +407,7 @@ sub parse {
         } elsif ($type eq 'HashRef') {
             $argv->{$opt} //= {};
             $check = (ref($argv->{$opt}) eq 'HASH') ? 1 : 0;
-        } elsif ('Config') {
+        } elsif ($type eq 'Config') {
             if ($argv->{$opt} && !(-f $argv->{$opt})) {
                 die "cannot load config file '@{[$argv->{$opt}]}\n";
             }
