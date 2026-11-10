@@ -1,11 +1,26 @@
 version: 2
 updates:
-  # Updates the base image of the Dockerfile (the build and test environment). Dependabot has no
-  # ecosystem for cpanfile, so the Perl dependencies are not covered here.
-  # Add github-actions here when .github/workflows is added (kan/p5-smart-options#9).
+  # Updates the actions of .github/workflows. The PRs also rewrite the entries of
+  # .github/workflows/actions.lock. Dependabot has no ecosystem for cpanfile, so the Perl
+  # dependencies are not covered here.
   #
   # cooldown: only take a version 3 days after it is published. A broken or hijacked release is
   # usually pulled within a few days. Security updates are not delayed by it.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 3
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    ignore:
+      # Moved together with scripts/tagpr/ by git subtree pull, never on its own (#9)
+      - dependency-name: 'kan/tagpr-scripts*'
+
+  # Updates the base image of the Dockerfile (the build and test environment).
   - package-ecosystem: docker
     directory: /
     schedule:

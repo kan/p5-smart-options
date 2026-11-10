@@ -1,0 +1,80 @@
+name: test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Two Perls, as in kan/coveralls-perl and kan/p5-web-service-mailgun: the one of the development
+# container (Dockerfile), and the oldest the module declares (`use 5.020`, `requires 'perl'` in
+# cpanfile). The versions in between are covered by CPAN Testers after each release.
+#
+# **The jobs on 5.44 run in the perl:5.44 image from Docker Hub.** actions-setup-perl downloads
+# Perl from GitHub Releases without a token, which fails with 504 whenever GitHub throttles
+# anonymous traffic (the GitHub incident of 2026-11-09). Only `oldest-perl` still uses it: the
+# perl images that work on the current runners start at 5.26 (perl:5.20 is in the schema 1
+# manifest format, which their Docker can no longer pull, and 5.22 / 5.24 have a glibc too old
+# for the Node 24 that actions/checkout runs on). When it fails with 504, re-run the failed jobs.
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: perl 5.44
+    container:
+      image: perl:5.44
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - name: perl -V
+        run: perl -V
+      - name: install dependencies
+        run: cpanm --notest --installdeps .
+      - name: run tests
+        run: prove -lr t
+
+  # The oldest Perl the module declares. The dependencies are the latest releases, as `cpanm`
+  # gives a user on 5.20; if one of them drops 5.20, this fails without a change here, and the
+  # oldest Perl has to be decided again.
+  oldest-perl:
+    runs-on: ubuntu-latest
+    name: perl 5.20
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: shogo82148/actions-setup-perl@v1.44.4
+        with:
+          perl-version: '5.20'
+      - name: install dependencies
+        run: cpanm --notest --installdeps .
+      - name: run tests
+        run: prove -lr t
+
+  # The tarball, made the way a release makes it, so that what goes into the distribution is
+  # checked before a release.
+  dist:
+    runs-on: ubuntu-latest
+    container:
+      image: perl:5.44
+    steps:
+      # The whole history: Minilla makes x_contributors of META.json from `git log`.
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      # The checkout belongs to another user than the container's root, and Minilla runs git.
+      - name: Configure git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      # Only what `minil dist` needs: Minilla, the markdown_maker of minil.toml, and
+      # Module::Build::Tiny for the Build.PL it runs.
+      - name: Install Minilla
+        run: cpanm --quiet --notest Minilla Pod::Markdown::Github Module::Build::Tiny
+      - name: Build the tarball
+        run: |
+          minil dist --no-test
+          tar tzf Smart-Options-*.tar.gz
