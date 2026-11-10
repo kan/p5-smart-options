@@ -7,6 +7,8 @@ Versions up to 0.061 were released from `Changes`, before this file existed.
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-11-10
+
 - Version numbers have three parts from 1.0.0 on (`1.0.1`, `1.1.0`), and the change log moves from `Changes` to `CHANGELOG.md`
 - **Breaking:** Require Perl 5.20 or later (`use 5.020`). 0.061 declared 5.10.1, and CI tested neither; CI now tests 5.20 and 5.44
 - Drop the dependencies on `File::Slurp` and `List::MoreUtils`; `uniq` comes from `List::Util` 1.45
@@ -73,6 +75,7 @@ Versions up to 0.061 were released from `Changes`, before this file existed.
 
 - Initial release
 
+[1.0.0]: https://github.com/kan/p5-smart-options/releases/tag/v1.0.0
 [0.061]: https://metacpan.org/release/MIKIHOSHI/Smart-Options-0.061
 [0.06]: https://metacpan.org/release/MIKIHOSHI/Smart-Options-0.06
 [0.056]: https://metacpan.org/release/MIKIHOSHI/Smart-Options-0.056
