@@ -98,19 +98,20 @@ docker compose run --rm perl minil build                  # 生成物の作り�
   lockfile を手で編集しない。Dependabot の更新 PR は lockfile も書き換える
 - **5.44 のジョブは Docker Hub の `perl:5.44` のコンテナで動かす。** actions-setup-perl は Perl を
   GitHub Releases から認証なしでダウンロードするので、GitHub が匿名のアクセスを絞ると 504 で落ちる。
-  `oldest-perl` と `publish.yml` の build だけは actions-setup-perl のまま。今の runner で使える `perl` の
-  イメージは 5.26 以降だけで、publish.yml はコンテナにすると Node も用意し直すことになるため。
+  `oldest-perl` だけは actions-setup-perl のまま。今の runner で使える `perl` のイメージは 5.26 以降だけのため。
+  `publish.yml` が呼ぶ共通の workflow の `publish / Build and check` も actions-setup-perl を使う。
+  こちらは tagpr-scripts の中にあり、版はこの repo の `actions.lock` ではなく tagpr-scripts の側で固定される
+  （`scripts/tagpr/README.md` の「The CPAN publish workflow」）。
   504 で落ちたら `gh run rerun <run-id> --failed` で再実行する
 - Travis CI、CircleCI、Coveralls は廃止済み
 
 ## Perl の版を揃える場所
 
 - **開発に使う版（今は 5.44）は、次の 4 か所で揃える。** `Dockerfile` の `FROM`、`test.yml` の
-  `perl:<版>` のイメージ（`test` ジョブと `dist` ジョブ）、`publish.yml` の `perl-version`、
-  `docker-compose.yml` のボリューム名（2 か所）。
-  Dependabot（`dependabot.yml` の
-  `docker`）が PR で上げるのは `Dockerfile` だけなので、その PR を取り込むときは残りも同じ PR で手で
-  上げる。CI が古い版のまま通っても、新しい版を試したことにはならない。前のボリュームは
+  `perl:<版>` のイメージ（`test` ジョブと `dist` ジョブ）、`publish.yml` の `with:` の `perl-version`
+  （共通の workflow へ渡す入力）、`docker-compose.yml` のボリューム名（2 か所）。
+  Dependabot（`dependabot.yml` の `docker`）が PR で上げるのは `Dockerfile` だけなので、その PR を
+  取り込むときは残りも同じ PR で手で上げる。CI が古い版のまま通っても、新しい版を試したことにはならない。前のボリュームは
   `docker volume rm p5-smart-options_perl-local-<前の版>` で消す
 - **最低の版（今は 5.20）は、次の 3 か所で揃える。** `lib/Smart/Options.pm` の `use 5.020`、`cpanfile` の
   `requires 'perl', '5.020000'`、`test.yml` の `oldest-perl` の `perl-version`。変えたら `minil build` で
@@ -123,6 +124,8 @@ docker compose run --rm perl minil build                  # 生成物の作り�
 リリースは tagpr で行う。`master` への push ごとに `tagpr.yml` がリリース PR を作り直し、
 それをマージするとタグ（`vX.Y.Z`）が打たれ、`publish.yml` が CPAN（PAUSE）へアップロードして
 GitHub Release を作る。仕組みと落ちたときの扱いは `scripts/tagpr/README.md` の「The tagpr workflow」。
+`publish.yml` は tagpr-scripts の共通の workflow（`publish-cpan.yml`）を呼ぶだけで、ジョブの中身と
+落ちたときの再実行の仕方は同じ README の「The CPAN publish workflow」にある。
 
 1. 変更は PR で入れる。**利用者に見える変更の PR は、`CHANGELOG.md` の `## [Unreleased]` の下に
    1 行を足す。** その節がそのままリリースノートになる。外部の貢献者の変更には既存の行にならって
@@ -137,8 +140,9 @@ GitHub Release を作る。仕組みと落ちたときの扱いは `scripts/tagp
    - 版の上がり方はラベルで決まる。`enhancement` の PR が入っていれば minor、それ以外は patch。
      変えたいときはリリース PR に `tagpr:minor` / `tagpr:major` を付ける。`tagpr-label.yml` が
      リリース PR を draft にして作り直し、ready に戻す。ready に戻るのを待ってからマージする
-4. マージすると tagpr がタグを打ち、`publish.yml` がテストして tarball を作り、PAUSE へ
-   アップロードしてから GitHub Release を作る
+4. マージすると tagpr がタグを打ち、`publish.yml` が動く。テストして tarball を作り
+   （`publish / Build and check`）、PAUSE へアップロードする（`publish / Upload to PAUSE`）。
+   その後で GitHub Release を作る（`publish / Create the GitHub release`）
 5. PAUSE から届く索引のメールを確かめる
 
 **PAUSE へのアップロードは取り消せない。** 同じファイル名は二度と受け付けられないので、壊れた版を
@@ -155,11 +159,13 @@ GitHub Release を作る。仕組みと落ちたときの扱いは `scripts/tagp
   コミットに起点として `v0.61.0` を annotated で打ってある
 - **`scripts/tagpr/` を手で編集しない。** 変えるときは kan/tagpr-scripts を直し、
   `git subtree pull -S --prefix=scripts/tagpr https://github.com/kan/tagpr-scripts.git main --squash` で
-  取り込む。同じ PR で `tagpr.yml` と `tagpr-label.yml` の `uses: kan/tagpr-scripts/...@<SHA>` を、
+  取り込む。同じ PR で `tagpr.yml`、`tagpr-label.yml`、`publish.yml` の `uses: kan/tagpr-scripts/...@<SHA>` を、
   squash のコミットの `git-subtree-split` の SHA へ上げる。食い違いは `test.yml` の `tagpr-subtree`
   ジョブが落とす。**この PR はマージコミットでマージする**（squash すると次の subtree pull が壊れる）
 - PAUSE の認証情報は GitHub の `cpan` environment の secret（`PAUSE_USER` / `PAUSE_PASSWORD`）にある。
-  PAUSE ID は `MIKIHOSHI`。repo のルートに `.pause` があってもコミットしない（`.gitignore` 済み）
+  PAUSE ID は `MIKIHOSHI`。repo のルートに `.pause` があってもコミットしない（`.gitignore` 済み）。
+  `cpan` environment でデプロイできる ref はタグ `v*` だけに絞ってある（Settings → Environments →
+  `cpan` → Deployment branches and tags）
 
 ## 運用
 

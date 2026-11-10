@@ -33,7 +33,7 @@ jobs:
     # request that pulls the subtree (the `git-subtree-split` line of the squash commit). A reusable
     # workflow from another repository is not pinned by `actions.lock`; a mismatch is caught by
     # `verify-subtree.mjs` in test.yml.
-    uses: kan/tagpr-scripts/.github/workflows/tagpr.yml@5798ef5c805057f28d47b7b518c2c1d067f55407
+    uses: kan/tagpr-scripts/.github/workflows/tagpr.yml@eac2e629aa8f89e1d4959ce0542332367f5c73ea
     # The most the shared workflow gets. All four are listed, as its README asks.
     permissions:
       contents: write       # push the release branch and the tag
