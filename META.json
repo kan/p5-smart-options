@@ -74,7 +74,7 @@
          "web" : "https://github.com/kan/p5-smart-options"
       }
    },
-   "version" : "0.061",
+   "version" : "0.61.0",
    "x_contributors" : [
       "Hiroyuki Akabane <447188+hirobanex@users.noreply.github.com>",
       "Takuji Nishibayashi <228591+takuji31@users.noreply.github.com>",

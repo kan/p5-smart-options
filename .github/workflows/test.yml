@@ -55,14 +55,16 @@ jobs:
       - name: run tests
         run: prove -lr t
 
-  # The tarball, made the way a release makes it, so that what goes into the distribution is
-  # checked before a release.
+  # The tarball that publish.yml uploads, made the same way ("Build the tarball" there; change both
+  # together), so that what goes into the distribution is checked before a release: scripts/ must
+  # stay out (minil.toml). The one difference is where Perl 5.44 comes from: publish.yml gets it
+  # from actions-setup-perl (see there).
   dist:
     runs-on: ubuntu-latest
     container:
       image: perl:5.44
     steps:
-      # The whole history: Minilla makes x_contributors of META.json from `git log`.
+      # The whole history, as in publish.yml: Minilla makes x_contributors from `git log`.
       - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
@@ -77,4 +79,22 @@ jobs:
       - name: Build the tarball
         run: |
           minil dist --no-test
-          tar tzf Smart-Options-*.tar.gz
+          files="$(tar tzf Smart-Options-*.tar.gz)"
+          printf '%s\n' "$files"
+          if printf '%s\n' "$files" | grep -q '^[^/]*/scripts/'; then
+            echo "the tarball contains scripts/" >&2
+            exit 1
+          fi
+
+  # scripts/tagpr/ must be the tagpr-scripts commit that tagpr.yml calls (scripts/tagpr/README.md).
+  tagpr-subtree:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 24
+      - name: Check scripts/tagpr/ against the tagpr workflow pin
+        run: node scripts/tagpr/verify-subtree.mjs
