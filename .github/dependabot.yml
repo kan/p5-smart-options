@@ -17,15 +17,15 @@ updates:
         patterns:
           - "*"
     ignore:
-      # Moved together with scripts/tagpr/ by git subtree pull, never on its own (#9)
+      # Moved together with scripts/tagpr/ by git subtree pull, never on its own
       - dependency-name: 'kan/tagpr-scripts*'
 
   # Updates the base image of the development container (Dockerfile, `FROM perl:5.44`).
   #
   # **Only the Dockerfile is updated.** Dependabot does not read the `container:` images of
   # .github/workflows, so a pull request that moves the Perl version (5.44 to 5.46, say) must also
-  # move, by hand: the `perl:<version>` images of test.yml and the volume name in
-  # docker-compose.yml (AGENTS.md).
+  # move, by hand: the `perl:<version>` images of test.yml, the `perl-version` of publish.yml, and
+  # the volume name in docker-compose.yml (AGENTS.md).
   - package-ecosystem: docker
     directory: /
     schedule:

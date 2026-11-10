@@ -1,0 +1,2 @@
+# scripts/tagpr/ reads CHANGELOG.md with LF line endings only.
+CHANGELOG.md text eol=lf

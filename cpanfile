@@ -15,8 +15,7 @@ on 'test' => sub {
 };
 
 on 'develop' => sub {
-    # v3.2.0: as in kan/coveralls-perl and kan/p5-web-service-mailgun. #9 uses its
-    # manage_changes in minil.toml (the change log moves to CHANGELOG.md)
+    # v3.2.0: manage_changes in minil.toml (the change log is CHANGELOG.md)
     requires 'Minilla', 'v3.2.0';
     requires 'Pod::Markdown::Github';
 };

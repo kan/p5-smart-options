@@ -14,9 +14,11 @@
 | `t/declare/*.t` | `Smart::Options::Declare` のテスト |
 | `cpanfile` | 依存モジュールの宣言（runtime / test / develop） |
 | `minil.toml` | Minilla の設定 |
-| `Changes` | リリース履歴（#9 で `CHANGELOG.md` に移す） |
+| `CHANGELOG.md` | リリース履歴（Keep a Changelog）。`## [Unreleased]` の下に未リリースの変更を書く |
+| `.tagpr` | tagpr の設定 |
+| `scripts/tagpr/` | kan/tagpr-scripts を `git subtree` で取り込んだもの。**手で編集しない**（下の「バージョンとリリース」）。配布物には入らない |
 | `Dockerfile` / `docker-compose.yml` | 開発用の Perl コンテナ（公式の `perl:5.44` に cpm を足したもの）。配布物には入らない |
-| `.github/workflows/` | CI（`test.yml`）と `actions.lock` の検証（`verify-lockfile.yml`） |
+| `.github/workflows/` | CI（`test.yml`）、`actions.lock` の検証（`verify-lockfile.yml`）、リリース（`tagpr.yml` / `tagpr-label.yml` / `publish.yml`） |
 | `.mailmap` | 配布物の `x_contributors` に出す名前とアドレス（下の「生成物は直接編集しない」） |
 
 ## 開発コマンド
@@ -71,7 +73,7 @@ docker compose run --rm perl minil build                  # 生成物の作り�
   書く**（例: `List::Util` の `uniq` は 1.45 からで、その版がコアに入ったのは 5.26。`cpanfile` に
   `requires 'List::Util', '1.45';` と書き、`use List::Util 1.45 qw(uniq);` で読む）
 - **公開している振る舞いを変えない。** `parse` が返すハッシュの形、help の文字列、`die` するかどうかは
-  利用者のコードやテストが頼っている。変えるときは `Changes` に書く
+  利用者のコードやテストが頼っている。変えるときは `CHANGELOG.md` に書く
 - インデントは 4 スペース。ファイルを開くときはレキシカルなファイルハンドルと 3 引数の `open` を使う
 
 ## テスト
@@ -87,22 +89,25 @@ docker compose run --rm perl minil build                  # 生成物の作り�
 
 | workflow | 起動 | 内容 |
 | --- | --- | --- |
-| `test.yml` | `master` への push、PR、`workflow_dispatch` | perl 5.44 のテスト（`test`、Docker Hub の `perl:5.44` のコンテナ）、宣言の最低版 5.20 のテスト（`oldest-perl`、actions-setup-perl）、`minil dist` の tarball の確認（`dist`） |
+| `test.yml` | `master` への push、PR、`workflow_dispatch` | perl 5.44 のテスト（`test`、Docker Hub の `perl:5.44` のコンテナ）、宣言の最低版 5.20 のテスト（`oldest-perl`、actions-setup-perl）、`minil dist` の tarball に `scripts/` が入らないかの確認（`dist`）、`scripts/tagpr/` と呼ぶ SHA の一致の確認（`tagpr-subtree`） |
 | `verify-lockfile.yml` | `master` への push、PR | `actions.lock` の検証 |
+| `tagpr.yml` / `tagpr-label.yml` / `publish.yml` | リリース | 下の「バージョンとリリース」 |
 
 - action の版は `.github/workflows/actions.lock` で固定している。**`uses:` の行を変えたら、repo の
   ルートで `gh actions-lock` を実行し、書き換わった workflow と lockfile を一緒にコミットする。**
   lockfile を手で編集しない。Dependabot の更新 PR は lockfile も書き換える
 - **5.44 のジョブは Docker Hub の `perl:5.44` のコンテナで動かす。** actions-setup-perl は Perl を
   GitHub Releases から認証なしでダウンロードするので、GitHub が匿名のアクセスを絞ると 504 で落ちる。
-  `oldest-perl` だけは actions-setup-perl のまま（今の runner で使える `perl` のイメージは 5.26 以降だけ）。
+  `oldest-perl` と `publish.yml` の build だけは actions-setup-perl のまま。今の runner で使える `perl` の
+  イメージは 5.26 以降だけで、publish.yml はコンテナにすると Node も用意し直すことになるため。
   504 で落ちたら `gh run rerun <run-id> --failed` で再実行する
 - Travis CI、CircleCI、Coveralls は廃止済み
 
 ## Perl の版を揃える場所
 
-- **開発に使う版（今は 5.44）は、次の 3 か所で揃える。** `Dockerfile` の `FROM`、`test.yml` の
-  `perl:<版>` のイメージ（`test` ジョブと `dist` ジョブ）、`docker-compose.yml` のボリューム名（2 か所）。
+- **開発に使う版（今は 5.44）は、次の 4 か所で揃える。** `Dockerfile` の `FROM`、`test.yml` の
+  `perl:<版>` のイメージ（`test` ジョブと `dist` ジョブ）、`publish.yml` の `perl-version`、
+  `docker-compose.yml` のボリューム名（2 か所）。
   Dependabot（`dependabot.yml` の
   `docker`）が PR で上げるのは `Dockerfile` だけなので、その PR を取り込むときは残りも同じ PR で手で
   上げる。CI が古い版のまま通っても、新しい版を試したことにはならない。前のボリュームは
@@ -115,7 +120,50 @@ docker compose run --rm perl minil build                  # 生成物の作り�
 
 ## バージョンとリリース
 
-#9 で tagpr へ移す。それまでは版を手で変えない（リリースの作業はメンテナが行う）。
+リリースは tagpr で行う。`master` への push ごとに `tagpr.yml` がリリース PR を作り直し、
+それをマージするとタグ（`vX.Y.Z`）が打たれ、`publish.yml` が CPAN（PAUSE）へアップロードして
+GitHub Release を作る。仕組みと落ちたときの扱いは `scripts/tagpr/README.md` の「The tagpr workflow」。
 
-- develop の依存から `Version::Next` と `CPAN::Uploader` を外してあるので、#9 より前に `minil release` を
-  使うなら、その 2 つを別に入れる
+1. 変更は PR で入れる。**利用者に見える変更の PR は、`CHANGELOG.md` の `## [Unreleased]` の下に
+   1 行を足す。** その節がそのままリリースノートになる。外部の貢献者の変更には既存の行にならって
+   `(thanks <名前>)` を付ける。リンクは行の中に書く（参照リンクの定義は節の外にあり、
+   リリースノートではリンクにならない）。見出しや末尾のリンクの形は `scripts/tagpr/README.md` の
+   「What the CHANGELOG has to look like」
+2. `master` へマージされるたびに、リリース PR（ブランチ `tagpr-from-v<前の版>`）が作り直される。
+   リリース PR は `Options.pm` の `$VERSION` と `META.json` の版を上げ、`## [Unreleased]` を
+   その版の節に変える
+3. 出したくなったら、リリース PR の中身（版と CHANGELOG の節）を確かめてマージする
+   - **tagpr の run が赤いリリース PR はマージしない**（落ちた run がリリース PR を draft にする）
+   - 版の上がり方はラベルで決まる。`enhancement` の PR が入っていれば minor、それ以外は patch。
+     変えたいときはリリース PR に `tagpr:minor` / `tagpr:major` を付ける。`tagpr-label.yml` が
+     リリース PR を draft にして作り直し、ready に戻す。ready に戻るのを待ってからマージする
+4. マージすると tagpr がタグを打ち、`publish.yml` がテストして tarball を作り、PAUSE へ
+   アップロードしてから GitHub Release を作る
+5. PAUSE から届く索引のメールを確かめる
+
+**PAUSE へのアップロードは取り消せない。** 同じファイル名は二度と受け付けられないので、壊れた版を
+出したら版を上げて出し直す。
+
+- **版を手で変えない。** 版は `Options.pm` の `our $VERSION` と `META.json` にあり、どちらも
+  リリース PR で tagpr が上げる（`.tagpr` の `versionFile`）。`minil release` は使わない
+- **版は 3 つ組（`1.0.1`、`1.1.0`）にする。** 0.x の 3 つ組は数値にすると前の版より小さくなりやすい
+  （0.7.0 は 0.007000 で 0.061 より小さい）。PAUSE はそういう版を索引に載せない。tagpr での最初の
+  リリースを 1.0.0 にし（最初のリリース PR に `tagpr:major`）、以後は 3 つ組のまま上げる
+- `Options.pm` と `META.json` の版は、起点のタグ `v0.61.0` に合わせて `0.61.0` にしてある。tagpr は
+  前のタグの版の文字列を `versionFile` から探して置き換えるため。0.61.0 は CPAN へは出さない
+- `0.061` 以前のタグは Minilla が打った `v` 無しのもの。tagpr は `vX.Y.Z` しか見ないので、0.061 の
+  コミットに起点として `v0.61.0` を annotated で打ってある
+- **`scripts/tagpr/` を手で編集しない。** 変えるときは kan/tagpr-scripts を直し、
+  `git subtree pull -S --prefix=scripts/tagpr https://github.com/kan/tagpr-scripts.git main --squash` で
+  取り込む。同じ PR で `tagpr.yml` と `tagpr-label.yml` の `uses: kan/tagpr-scripts/...@<SHA>` を、
+  squash のコミットの `git-subtree-split` の SHA へ上げる。食い違いは `test.yml` の `tagpr-subtree`
+  ジョブが落とす。**この PR はマージコミットでマージする**（squash すると次の subtree pull が壊れる）
+- PAUSE の認証情報は GitHub の `cpan` environment の secret（`PAUSE_USER` / `PAUSE_PASSWORD`）にある。
+  PAUSE ID は `MIKIHOSHI`。repo のルートに `.pause` があってもコミットしない（`.gitignore` 済み）
+
+## 運用
+
+- **`master` へ直接 push しない。** ブランチを切って PR で入れる。tagpr はマージされた PR から
+  リリース PR を組み立てるため、直接 push した変更はリリースの流れから漏れる
+- tagpr のリリース PR では CI が走らない（`GITHUB_TOKEN` で作られた PR は workflow を起動しない）。
+  リリース PR の版と CHANGELOG は、tagpr の run の中で `release-prepare.mjs` が確かめる
