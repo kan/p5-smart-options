@@ -20,15 +20,25 @@ updates:
       # Moved together with scripts/tagpr/ by git subtree pull, never on its own (#9)
       - dependency-name: 'kan/tagpr-scripts*'
 
-  # Updates the base image of the Dockerfile (the build and test environment).
+  # Updates the base image of the development container (Dockerfile, `FROM perl:5.44`).
+  #
+  # **Only the Dockerfile is updated.** Dependabot does not read the `container:` images of
+  # .github/workflows, so a pull request that moves the Perl version (5.44 to 5.46, say) must also
+  # move, by hand: the `perl:<version>` images of test.yml and the volume name in
+  # docker-compose.yml (AGENTS.md).
   - package-ecosystem: docker
     directory: /
     schedule:
       interval: weekly
     cooldown:
       default-days: 3
-    # Perl versions with an odd minor number are development releases. Skip them and only take
-    # stable releases (even minor). Extend the list when a new development series starts.
+    # Perl versions with an odd minor number are development releases (perl:5.45, perl:5.45.4).
+    # Dependabot already takes a tag newer than `latest` as a pre-release (the run log says so);
+    # this list is the second guard, for when it cannot read `latest`. Extend the list when a new
+    # development series starts.
+    #
+    # **Ranges, not `5.45.x`.** The docker ecosystem reads `5.45.x` as the exact version "5.45.x",
+    # which no tag is (Gem::Requirement), so it ignored nothing.
     ignore:
       - dependency-name: perl
-        versions: ["5.45.x", "5.47.x", "5.49.x"]
+        versions: [">= 5.45, < 5.46", ">= 5.47, < 5.48", ">= 5.49, < 5.50"]

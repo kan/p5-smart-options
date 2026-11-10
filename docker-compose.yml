@@ -1,0 +1,25 @@
+services:
+  perl:
+    build:
+      context: .
+      # HOST_UID / HOST_GID, not UID: bash's UID is read-only and not exported.
+      args:
+        UID: ${HOST_UID:-1000}
+        GID: ${HOST_GID:-1000}
+    # Run as the host user, so that the files written into the repository are not
+    # owned by root.
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    volumes:
+      - ./:/app
+      - perl-local-5.44:/app/local
+    environment:
+      HOME: /tmp
+      PERL5LIB: /app/local/lib/perl5
+      PATH: /app/local/bin:/usr/local/bin:/usr/bin:/bin
+    tty: true
+
+volumes:
+  # The modules installed by cpm. Named for the Perl version: XS modules built for
+  # another version cannot be loaded.
+  perl-local-5.44:
+    driver: local

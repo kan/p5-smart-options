@@ -1,6 +1,10 @@
 Revision history for Perl extension Smart::Options
 
 {{$NEXT}}
+    - require Perl 5.20 or later
+    - drop the dependencies on File::Slurp and List::MoreUtils (List::Util 1.45 is used for uniq)
+    - a Config file that cannot be opened now dies with "cannot open config file '...': ..."
+    - fix the POD (examples of describe, demand, coerce and the SYNOPSIS; document env, env_prefix and add_help)
 
 0.061 2017-05-11T13:16:43Z
     - fix coerce (method chain)

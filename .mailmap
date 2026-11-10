@@ -1,0 +1,13 @@
+# Minilla builds x_contributors of META.json from `git log --format="%aN <%aE>"`,
+# which applies this file. The contributors are published with their GitHub noreply
+# addresses, not the addresses of their commits.
+hayajo <848587+hayajo@users.noreply.github.com> <hayajo@cpan.org>
+Hiroyuki Akabane <447188+hirobanex@users.noreply.github.com> <hirobanex@gmail.com>
+Takuji Nishibayashi <228591+takuji31@users.noreply.github.com> <takuji31@gmail.com>
+Kan Fushihara <kan.fushihara@gmail.com> kan fushihara <kan.fushihara@gmail.com>
+
+# The bots that commit here are not contributors: the release pull requests of tagpr
+# (github-actions, #9) and the version updates of Dependabot. Mapped to the author of the
+# module, whom Minilla leaves out of x_contributors.
+Kan Fushihara <kan.fushihara@gmail.com> <41898282+github-actions[bot]@users.noreply.github.com>
+Kan Fushihara <kan.fushihara@gmail.com> <49699333+dependabot[bot]@users.noreply.github.com>

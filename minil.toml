@@ -1,4 +1,6 @@
 name = "Smart-Options"
-badges = ['travis', 'coveralls']
+badges = ["github-actions"]
+module_maker = "ModuleBuildTiny"
+markdown_maker = "Pod::Markdown::Github"
 [FileGatherer]
-exclude_match = ['Dockerfile', '^\.github/']
+exclude_match = ["Dockerfile", "docker-compose.yml", "AGENTS.md", "^\\.github/"]
